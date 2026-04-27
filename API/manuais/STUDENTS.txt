@@ -1,0 +1,54 @@
+MANUAL DE INTEGRAÇÃO - STUDENTS
+
+Rota de Login (POST)
+- Endpoint: /students/login
+- JSON: { "ra": "...", "password": "..." }
+- Postman: http://localhost:5000/students/login
+Body:
+{
+"ra": "2024005",
+"password": "123"
+}
+
+Listagem (GET)
+- Endpoint: /students
+- Retorno: JSON com dados do aluno e descrição da série (dsYearSerie).
+- Postman: http://localhost:5000/students
+
+Consulta por ID (GET)
+- Endpoint: /students/<id>
+- Retorno: JSON com os dados do aluno específico.
+- Postman: http://localhost:5000/students/1
+
+Cadastro (POST)
+- Endpoint: /students
+- JSON: { "name": "...", "ra": "...", "password": "...", "birth": "YYYY-MM-DD", "idClass": int }
+- Postman: http://localhost:5000/students
+Body:
+{
+"name": "Carlos Alberto",
+"ra": "2024005",
+"password": "123",
+"birth": "2012-10-25",
+"idClass": 1
+}
+
+Atualização (PUT)
+- Endpoint: /students/<id>
+- JSON: { "name": "...", "ra": "...", "password": "...", "birth": "YYYY-MM-DD", "idClass": int }
+- Postman: http://localhost:5000/students/1
+Body:
+{
+"name": "Carlos Alberto Sousa",
+"idClass": 1
+}
+- Nota: O campo "password" é opcional. Se não enviado, a senha atual é mantida.
+
+Exclusão (DELETE)
+- Endpoint: /students/<id>
+- Postman: http://localhost:5000/students/1
+
+Regras Importantes
+- Senhas: Usam criptografia Hash (Werkzeug).
+- Datas: Formato AAAA-MM-DD.
+- Integridade: Alunos com partidas na tabela 'Games' não podem ser excluídos (a API retornará erro 400).

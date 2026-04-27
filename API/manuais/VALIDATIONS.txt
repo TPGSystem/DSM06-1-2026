@@ -1,0 +1,26 @@
+MANUAL DE INTEGRAÇÃO - VALIDATIONS
+
+Rota de Listagem (GET)
+- Endpoint: /validations
+- Retorno: JSON com os tipos de validação (correto/incorreto) e origens étnicas.
+- Postman: http://localhost:5000/validations
+
+Consulta por ID (GET)
+- Endpoint: /validations/<id>
+- Postman: http://localhost:5000/validations/1
+
+Script de Carga (Seed Inicial)
+Atenção: Execute este script antes da carga de Characters, pois os IDs de etnia são chaves estrangeiras necessárias.
+- SQL
+INSERT INTO Validations (descryption)
+VALUES
+('Incorreta'),
+('Correta'),
+('Indígena'),
+('Africano'),
+('Europeu');
+
+Regras Importantes
+- Multiuso: Esta tabela serve tanto para validar respostas de questões (IDs 1 e 2) quanto para definir a base étnica dos personagens (IDs 3, 4 e 5).
+- Somente Leitura: A estrutura de IDs é fixa para manter a coerência pedagógica e técnica do sistema.
+	

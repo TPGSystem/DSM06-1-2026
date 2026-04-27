@@ -1,0 +1,191 @@
+MANUAL DE INTEGRAÇÃO - PLAY (GAME ENGINE)
+
+Login do Aluno (POST) - Autentica o aluno via RA e Senha, retornando os dados do estudante e sua turma vinculada.
+- Endpoint: /play/login
+- Postman: http://localhost:5000/play/login
+Body:
+{
+  "ra": "123456789",
+  "password": "senha_secreta"
+}
+- Retorno
+{
+  "authenticated": true,
+  "message": "Login realizado com sucesso",
+  "student": {
+    "id": 1,
+    "name": "Gilberto Satyro",
+    "ra": "000001"
+  },
+  "class": {
+    "id": 3,
+    "dsClass": "9º Ano A - Manhã",
+    "course": "Ensino Fundamental II"
+  }
+}
+
+
+Consulta de Personagens (GET) - Retorna a lista de todos os personagens. Se o aluno já jogou com algum, traz os atributos atuais (força, agilidade, etc.) salvos na partida; caso contrário, traz os atributos base.
+- Endpoint: /play/characters/preview/<id_student>/<id_class>
+- Postman: http://localhost:5000/play/characters/preview/1/10
+- Retorno:
+[
+  {
+    "id": 1,
+    "number": 101,
+    "dsValidation": "Guerreiro",
+    "scoreStrength": 15,
+    "scoreAgility": 8,
+    "isUsed": true
+  },
+  {
+    "id": 2,
+    "number": 102,
+    "dsValidation": "Mago",
+    "scoreStrength": 5,
+    "scoreAgility": 12,
+    "isUsed": false
+  }
+]
+
+
+Seleção de Personagem (POST) - Inicia uma sessão de jogo e uma partida específica para o personagem escolhido.
+- Endpoint: /play/select-character
+- Postman: http://localhost:5000/play/select-character
+Body:
+{
+  "idStudent": 1,
+  "idClass": 10,
+  "idCharacter": 3,
+  "matchName": ""
+}
+- Retorno
+{
+  "message": "Partida iniciada com sucesso",
+  "match": {
+    "id": 42,
+    "matchName": "Jornada de Teste",
+    "idCharacter": 1,
+    "startTime": "2026-04-20T18:15:00Z",
+    "currentScore": 0
+  }
+}
+
+
+Listagem de Regiões e Progresso (GET) - Indica quais regiões estão bloqueadas (-1), em progresso (0) ou concluídas (1).
+- Endpoint: /play/regions/status/<id_game_match>
+- Postman: http://localhost:5000/play/regions/status/1
+- Retorno:
+[
+  { "id": 1, "descryption": "Floresta dos Operadores", "status": 1 },
+  { "id": 2, "descryption": "Montanha das Condicionais", "status": 0 },
+  { "id": 3, "descryption": "Vale dos Loops", "status": -1 }
+]
+
+
+Questões Iniciais Estáticas (GET) - Recupera o bloco fixo das 5 primeiras questões do banco de dados
+- Endpoint: /play/questions/initial
+- Postman: http://localhost:5000/play/questions/initial
+- Retorno
+[
+  {
+    "id": 1,
+    "question": "O que significa a sigla SQL?",
+    "idTheme": 3,
+    "dsTheme": "Bancos de Dados",
+    "idQuestionType": 1,
+    "dsQuestionType": "Múltipla Escolha",
+    "responses": [
+      { "text": "Structured Query Language", "idValidation": 1 },
+      { "text": "Simple Queue List", "idValidation": 2 },
+      { "text": "Standard Query Logic", "idValidation": 2 },
+      { "text": "Sequential Query List", "idValidation": 2 }
+    ]
+  },
+  {
+    "id": 2,
+    "question": "Qual comando é usado para selecionar dados em SQL?",
+    "idTheme": 3,
+    "dsTheme": "Bancos de Dados",
+    "idQuestionType": 1,
+    "dsQuestionType": "Múltipla Escolha",
+    "responses": [
+      { "text": "SELECT", "idValidation": 1 },
+      { "text": "GET", "idValidation": 2 },
+      { "text": "EXTRACT", "idValidation": 2 },
+      { "text": "SEARCH", "idValidation": 2 }
+    ]
+  }
+  // ... continua até o ID 5
+]
+
+
+Questões Inteligentes - Algoritmo ABC (GET) - etorna 5 questões baseadas nos temas onde o aluno possui maior índice de erro, priorizando a região atual.
+- Endpoint: /play/questions/smart/<id_student>/<id_class>?region=id
+- Postman: http://localhost:5000/play/questions/smart/1/10?region=2
+- Retorno
+[
+  {
+    "id": 1,
+    "question": "O que significa a sigla SQL?",
+    "idTheme": 3,
+    "dsTheme": "Bancos de Dados",
+    "idQuestionType": 1,
+    "dsQuestionType": "Múltipla Escolha",
+    "responses": [
+      { "text": "Structured Query Language", "idValidation": 1 },
+      { "text": "Simple Queue List", "idValidation": 2 },
+      { "text": "Standard Query Logic", "idValidation": 2 },
+      { "text": "Sequential Query List", "idValidation": 2 }
+    ]
+  },
+  {
+    "id": 2,
+    "question": "Qual comando é usado para selecionar dados em SQL?",
+    "idTheme": 3,
+    "dsTheme": "Bancos de Dados",
+    "idQuestionType": 1,
+    "dsQuestionType": "Múltipla Escolha",
+    "responses": [
+      { "text": "SELECT", "idValidation": 1 },
+      { "text": "GET", "idValidation": 2 },
+      { "text": "EXTRACT", "idValidation": 2 },
+      { "text": "SEARCH", "idValidation": 2 }
+    ]
+  }
+  // ... continua até o ID 5
+]
+
+
+Salvar Progresso de Questões (POST) - Registra o resultado das 5 questões e cria o idStep necessário para o desafio final da região.
+- Endpoint: /play/save-questions
+- Postman: http://localhost:5000/play/save-questions
+Body:
+{
+  "idGameMatch": 1,
+  "idRegion": 2,
+  "answers": [
+    { "idQuestion": 5, "points": 10 },
+    { "idQuestion": 12, "points": 0 }
+  ]
+}
+- Retorno 
+{
+  "message": "Questões salvas",
+  "idStep": 45
+}
+
+
+Salvar Desafio Final (POST) - Finaliza a região gravando os pontos do desafio e marcando o passo como completado.
+- Endpoint: /play/save-challenge
+- Postman: http://localhost:5000/play/save-challenge
+Body:
+{
+  "idStep": 45,
+  "points": 50
+}
+
+
+Regras Importantes do Módulo Play
+- A rota de Desafio exige obrigatoriamente o idStep gerado previamente pela rota de Questões. Isso garante que o aluno não pule etapas pedagógicas.
+- Ao iniciar uma partida com um personagem já utilizado anteriormente, o sistema recupera os atributos salvos na última partida em vez de usar os valores base dos personagens

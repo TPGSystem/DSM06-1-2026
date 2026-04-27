@@ -1,0 +1,41 @@
+MANUAL DE INTEGRAÇÃO - SKILLS
+
+Rota de Listagem (GET)
+- Endpoint: /skills
+- Retorno: JSON com a lista de habilidades e a descrição do componente (dsComponent).
+- Postman: http://localhost:5000/skills
+
+Consulta por ID (GET)
+- Endpoint: /skills/<id>
+- Postman: http://localhost:5000/skills/1
+
+Cadastro (POST)
+- Endpoint: /skills
+- JSON: { "idComponent": int, "skill": "string", "comment": "string", "skillCodeCP": "string", "skillCodeBNCC": "string" }
+- Postman: http://localhost:5000/skills
+Body:
+{
+"idComponent": 1,
+"skill": "Identificar figuras geométricas",
+"comment": "Habilidade básica de geometria",
+"skillCodeCP": "CP-MAT-01",
+"skillCodeBNCC": "EF01MA14"
+}
+
+Atualização (PUT)
+- Edpoint: /skills/<id>
+- JSON: { "idComponent": int, "skill": "string", "comment": "string", "skillCodeCP": "string", "skillCodeBNCC": "string" }
+- Postman: http://localhost:5000/skills/1
+Body: (Exemplo: alterando apenas o comentário)
+{
+"comment": "Atualizado para o novo currículo"
+}
+
+Exclusão (DELETE)
+- Endpoint: /skills/<id>
+- Postman: http://localhost:5000/skills/1
+
+Regras Importantes
+- Atualização Parcial: Se um campo não for enviado no Body do PUT, o valor original será preservado.
+- Integridade: O sistema bloqueia a exclusão caso a Habilidade esteja vinculada a uma Questão na tabela QuestionsSkills.
+- Nomenclatura: O campo skillCodeBNCC deve ser enviado exatamente com as minúsculas/maiúsculas indicadas para evitar erro de atributo.

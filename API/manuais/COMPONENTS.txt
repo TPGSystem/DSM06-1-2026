@@ -1,0 +1,21 @@
+MANUAL DE INTEGRAÇÃO - COMPONENTS
+
+Rota de Listagem (GET)
+- Endpoint: /components
+- Retorno: JSON com a lista de componentes curriculares.
+- Postman: http://localhost:5000/components
+
+Consulta por ID (GET)
+- Endpoint: /components/<id>
+- Postman: http://localhost:5000/components/1
+
+Script de Carga (Seed Inicial)
+Execute este comando SQL para popular a base com os componentes iniciais:
+- SQL
+INSERT INTO Components (descryption)
+VALUES
+('Arte');
+
+Regras Importantes
+- Acesso Somente Leitura: Esta rota não permite métodos de escrita (POST/PUT/DELETE) via API, sendo uma tabela de referência para as Skills.
+- Integridade: O campo descryption é obrigatório e define a categoria principal à qual as habilidades (Skills) estarão vinculadas.

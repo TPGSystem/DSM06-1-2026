@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-5" style="height: 400px;">
+    <div class="row">
+        <table class="table table-hover table-striped-columns">
+            <thead>
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">Nome</th>
+                  <th scope="col">RA</th>
+                  <th scope="col">Data_Nasc</th>
+                  <th scope="col">Classe</th>
+                  <th scope="col">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for student in students%}
+                <tr>
+                  <th scope="row">{{student.id}}</th>
+                  <td>{{student.name}}</td>
+                  <td>{{student.ra}}</td>
+                  <td>{{student.birth}}</td>
+                  <td>{{student.idClass}}</td>
+                  <td colspan="2">
+                    <a href="{{url_for('editStudent', id=student.id)}}" class="btn" style="background-color: #5491C7;"><img src="../static/imgs/Vector(3).png" alt="Editar" style="width: 22px; height: 20px;"></a>
+                    <a href="{{url_for('dstudent', id=student.id)}}" class="btn" style="background-color: #FE4D4D;"><img src="../static/imgs/Vector(4).png" alt="Deletar" style="width: 22px; height: 20px;"></a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock content %}

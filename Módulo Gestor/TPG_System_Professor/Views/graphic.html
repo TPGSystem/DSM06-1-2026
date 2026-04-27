@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<br><br>
+<div class="container-fluid">
+  <div class="row justify-content-center text-center">
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(desenharGraficos);
+
+      let alunosGlobais = [];
+
+      async function desenharGraficos() {
+        const resMedias = await fetch('/medias');
+        const resAlunos = await fetch('/dados');
+        const medias = await resMedias.json();
+        const alunos = await resAlunos.json();
+        alunosGlobais = alunos;
+
+        // === Select de Turmas ===
+        const turmas = [...new Set(alunos.map(a => a.turma))];
+        const selectTurma = document.getElementById('select_turma');
+        selectTurma.innerHTML = '<option value="">Todas as Turmas</option>';
+        turmas.forEach(t => {
+          const opt = document.createElement('option');
+          opt.value = t;
+          opt.textContent = t;
+          selectTurma.appendChild(opt);
+        });
+
+        // === Select de Alunos ===
+        atualizarSelectAlunos(alunos);
+
+        // === Gráfico 1: Média por Turma ===
+        const dataTurmas = new google.visualization.DataTable();
+        dataTurmas.addColumn('string', 'Turma');
+        dataTurmas.addColumn('number', 'Média');
+        dataTurmas.addColumn('number', 'Meta');
+
+        medias.turmas.forEach(t => dataTurmas.addRow([t.turma, t.media, medias.meta]));
+
+        const optTurmas = {
+          title: 'Média por Turma',
+          titleTextStyle: { fontSize: 22, bold: true },
+          legend: { position: 'bottom', textStyle: { fontSize: 18 } },
+          chartArea: { width: '80%', height: '70%' },
+          vAxis: { minValue: 0, maxValue: 100, textStyle: { fontSize: 15 } },
+          hAxis: { textStyle: { fontSize: 15 } },
+          width: 500,
+          height: 420
+        };
+
+        new google.visualization.LineChart(document.getElementById('grafico_turmas'))
+          .draw(dataTurmas, optTurmas);
+
+        desenharGraficoAlunos();
+        desenharGraficoQuestoes(); // desenha o gráfico vazio inicial
+      }
+
+      function desenharGraficoAlunos(turmaSelecionada = null) {
+        const dataAlunos = new google.visualization.DataTable();
+        dataAlunos.addColumn('string', 'Aluno');
+        dataAlunos.addColumn('number', 'Nota');
+
+        const alunosFiltrados = turmaSelecionada 
+          ? alunosGlobais.filter(a => a.turma === turmaSelecionada)
+          : alunosGlobais;
+
+        alunosFiltrados.forEach(a => {
+          const nota = (a.nota !== undefined && a.nota !== null) ? a.nota : 0;
+          dataAlunos.addRow([a.nome, nota]);
+        });
+
+        const optAlunos = {
+          title: turmaSelecionada ? `Notas dos Alunos - ${turmaSelecionada}` : 'Notas dos Alunos (todas as turmas)',
+          titleTextStyle: { fontSize: 22, bold: true },
+          legend: { position: 'none' },
+          chartArea: { width: '80%', height: '70%' },
+          vAxis: { minValue: 0, maxValue: 100, textStyle: { fontSize: 18 } },
+          hAxis: { textStyle: { fontSize: 18, slantedText: true, slantedTextAngle: 45 } },
+          width: 500,
+          height: 420
+        };
+
+        new google.visualization.ColumnChart(document.getElementById('grafico_alunos'))
+          .draw(dataAlunos, optAlunos);
+
+        atualizarSelectAlunos(alunosFiltrados);
+      }
+
+      function desenharGraficoQuestoes(alunoNome = null) {
+        const dataQuestoes = new google.visualization.DataTable();
+        dataQuestoes.addColumn('string', 'Questão');
+        dataQuestoes.addColumn('number', 'Nota');
+
+        let titulo = 'Desempenho por Questão';
+        let notas = [0, 0, 0, 0, 0]; // padrão quando não há aluno selecionado
+
+        if (alunoNome) {
+          const aluno = alunosGlobais.find(a => a.nome === alunoNome);
+          if (aluno && aluno.questoes) {
+            notas = aluno.questoes.map(n => (n !== undefined && n !== null ? n : 0));
+            titulo = `Desempenho por Questão - ${aluno.nome}`;
+          }
+        }
+
+        notas.forEach((nota, i) => {
+          dataQuestoes.addRow([`Q${i + 1}`, nota]);
+        });
+
+        const optQuestoes = {
+          title: titulo,
+          titleTextStyle: { fontSize: 22, bold: true },
+          legend: { position: 'none' },
+          chartArea: { width: '80%', height: '70%' },
+          vAxis: { minValue: 0, maxValue: 20, textStyle: { fontSize: 18 } },
+          hAxis: { textStyle: { fontSize: 18 } },
+          width: 500,
+          height: 420
+        };
+
+        new google.visualization.ColumnChart(document.getElementById('grafico_questoes'))
+          .draw(dataQuestoes, optQuestoes);
+      }
+
+      function filtrarTurma() {
+        const turmaSelecionada = document.getElementById('select_turma').value;
+        desenharGraficoAlunos(turmaSelecionada);
+      }
+
+      function filtrarAluno() {
+        const alunoSelecionado = document.getElementById('select_aluno').value;
+        desenharGraficoQuestoes(alunoSelecionado);
+      }
+
+      function atualizarSelectAlunos(lista) {
+        const selectAluno = document.getElementById('select_aluno');
+        selectAluno.innerHTML = '<option value="">Selecione um Aluno</option>';
+        lista.forEach(a => {
+          const opt = document.createElement('option');
+          opt.value = a.nome;
+          opt.textContent = a.nome;
+          selectAluno.appendChild(opt);
+        });
+      }
+    </script>
+
+    <!-- Selects -->
+    <div class="col-12 mb-4">
+      <label for="select_turma" style="font-size: 22px; font-weight: bold;">Selecione a Turma:</label>
+      <select id="select_turma" onchange="filtrarTurma()" class="form-select w-auto d-inline-block" style="font-size: 15px;">
+        <option>Carregando...</option>
+      </select>
+
+      &nbsp;&nbsp;&nbsp;
+
+      <label for="select_aluno" style="font-size: 22px; font-weight: bold;">Selecione o Aluno:</label>
+      <select id="select_aluno" onchange="filtrarAluno()" class="form-select w-auto d-inline-block" style="font-size: 15px;">
+        <option>Carregando...</option>
+      </select>
+    </div>
+
+    <!-- Gráficos lado a lado -->
+    <div class="d-flex flex-wrap justify-content-center gap-3">
+      <div id="grafico_turmas" class="bg-white rounded shadow"></div>
+      <div id="grafico_alunos" class="bg-white rounded shadow"></div>
+      <div id="grafico_questoes" class="bg-white rounded shadow"></div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock content %}

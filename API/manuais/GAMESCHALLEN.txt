@@ -1,0 +1,40 @@
+MANUAL DE INTEGRAÇÃO - GAMESCHALLENGES
+
+Rota de Listagem (GET)
+- Endpoint: /gamesChallenges
+- Retorno: JSON com a lista de desafios realizados nos passos das partidas.
+- Postman: http://localhost:5000/gamesChallenges
+
+Consulta por ID (GET)
+- Endpoint: /gamesChallenges/<id>
+- Postman: http://localhost:5000/gamesChallenges/1
+
+Cadastro (POST)
+- Endpoint: /gamesChallenges
+- JSON: { "idGamesSteps": int, "number": int, "dateTime": "ISOString", "points": int }
+- Postman: http://localhost:5000/gamesChallenges
+Body:
+{
+"idGamesSteps": 5,
+"number": 1,
+"dateTime": "2024-05-20T16:00:00Z",
+"points": 50
+}
+
+Atualização (PUT)
+- Endpoint: /gamesChallenges/<id>
+- JSON: { "number": int, "points": int }
+- Postman: http://localhost:5000/gamesChallenges/1
+Body: (Exemplo: atualizando apenas os pontos do desafio)
+{
+"points": 75
+}
+
+Exclusão (DELETE)
+- Endpoint: /gamesChallenges/<id>
+- Postman: http://localhost:5000/gamesChallenges/1
+
+Regras Importantes
+- Atualização Parcial: O método PUT permite alterar apenas campos específicos sem a necessidade de reenviar todo o objeto.
+- Pontuação Padrão: Caso o campo points não seja enviado no POST, o sistema assume o valor 0.
+- Data Automática: O Model está configurado para gerar o dateTime automaticamente caso não seja fornecido, mas o endpoint permite o envio manual para sincronização de logs antigos.

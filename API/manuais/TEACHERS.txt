@@ -1,0 +1,50 @@
+MANUAL DE INTEGRAÇÃO - TEACHERS
+
+Rota de Login (POST)
+- Endpoint: /teachers/login
+- JSON: { "eMail": "...", "password": "..." }
+- Postman: http://localhost:5000/teachers/login
+Body:
+{
+"eMail": "professor@escola.com",
+"password": "senha123"
+}
+
+Listagem (GET)
+- Endpoint: /teachers
+- Retorno: JSON com lista de professores (ID, Nome, e-Mail).
+- Postman: http://localhost:5000/teachers
+
+Consulta por ID (GET)
+- Endpoint: /teachers/<id>
+- Postman: http://localhost:5000/teachers/1
+
+Cadastro (POST)
+- Endpoint: /teachers
+- JSON: { "name": "...", "eMail": "...", "password": "..." }
+- Postman: http://localhost:5000/teachers
+Body:
+{
+"name": "Arnaldo Antunes",
+"eMail": "arnaldo@escola.com",
+"password": "mudar123"
+}
+
+Atualização (PUT)
+- Endpoint: /teachers/<id>
+- JSON: { "name": "...", "eMail": "...", "password": "..." }
+- Postman: http://localhost:5000/teachers/1
+Body: (Exemplo: alterando apenas o nome)
+{
+"name": "Arnaldo A. Silva"
+}
+Nota: Se a senha não for enviada, a atual permanece.
+
+Exclusão (DELETE)
+- Endpoint: /teachers/<id>
+- Postman: http://localhost:5000/teachers/1
+
+Regras Importantes
+- Senhas: Usam criptografia Hash (Werkzeug).
+- Atualização Parcial: Campos ausentes no Body do PUT não são alterados no banco.
+- Integridade: Professores vinculados a Classes não podem ser excluídos.

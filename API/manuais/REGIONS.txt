@@ -1,0 +1,33 @@
+MANUAL DE INTEGRAÇÃO - REGIONS
+
+Rota de Listagem (GET)
+- Endpoint: /regions
+- Retorno: JSON com a lista de todas as regiões/localidades do mapa do jogo.
+- Postman: http://localhost:5000/regions
+
+Consulta por ID (GET)
+- Endpoint: /regions/<id>
+- Postman: http://localhost:5000/regions/1
+
+Script de Carga (Seed Inicial)
+Execute este script para popular o mapa do mundo:
+- SQL
+INSERT INTO Regions (descryption)
+VALUES
+('Propugnáculo Além-Mar (Ilha Forte)'),
+('Vilarejo de Canaã'),
+('Vila da Enseada do Rio'),
+('Povoado do Cadastro'),
+('Vilarejo dos Grandes Pássaros do Rio'),
+('Vale de Luz e Sombra'),
+('Freguesia do Rio dos Peixes'),
+('Vilarejo de Praia Pequena'),
+('Vila do Pássaro Vermelho'),
+('Vilarinho das Pedras que Fluem'),
+('Barragem do Arco-Íris'),
+('Vale dos Alecrins'),
+('Bosque dos Cajás');
+
+Regras Importantes
+- Somente Leitura: Esta tabela é fundamental para o progresso do jogador (GamesSteps). Como as regiões são fixas no mapa, a API não permite edições.
+- Uso no Game: Cada região representa uma etapa ou fase que o jogador deve completar para avançar na narrativa.

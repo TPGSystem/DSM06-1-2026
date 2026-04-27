@@ -1,0 +1,39 @@
+MANUAL DE INTEGRAÇÃO - GAMES
+
+Rota de Listagem (GET)
+- Endpoint: /games
+- Retorno: JSON com a lista de jogos, incluindo nomes de estudantes e descrições de turmas.
+- Postman: http://localhost:5000/games
+
+Consulta por ID (GET)
+- Endpoint: /games/<id>
+- Postman: http://localhost:5000/games/1
+
+Cadastro (POST)
+- Endpoint: /games
+- JSON: { "idStudent": int, "idClass": int, "gold": int }
+- Postman: http://localhost:5000/games
+Body:
+{
+"idStudent": 1,
+"idClass": 5,
+"gold": 100
+}
+
+Atualização (PUT)
+- Endpoint: /games/<id>
+- JSON: { "idStudent": int, "idClass": int, "gold": int }
+- Postman: http://localhost:5000/games/1
+Body: (Exemplo: alterando apenas a quantidade de ouro)
+{
+"gold": 250
+}
+
+Exclusão (DELETE)
+- Endpoint: /games/<id>
+- Postman: http://localhost:5000/games/1
+
+Regras Importantes
+- Atualização Parcial: Caso um campo não seja enviado no JSON do PUT, o valor atual no banco de dados será mantido.
+- Integridade: Não é possível excluir um registro de Game que possua partidas vinculadas na tabela GamesMatches.
+- Valor Padrão: No cadastro (POST), se o campo gold não for enviado, ele será iniciado automaticamente com 0.

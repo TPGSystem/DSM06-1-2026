@@ -1,0 +1,41 @@
+MANUAL DE INTEGRAÇÃO - GAMESSTEPS
+
+Rota de Listagem (GET)
+- Endpoint: /gamesSteps
+- Retorno: JSON com o status de conclusão (questões e desafios) por região e partida.
+- Postman: http://localhost:5000/gamesSteps
+
+Consulta por ID (GET)
+- Endpoint: /gamesSteps/<id>
+- Postman: http://localhost:5000/gamesSteps/1
+
+Cadastro (POST)
+- Endpoint: /gamesSteps
+- JSON: { "idGameMatch": int, "idRegion": int, "dateTime": "ISOString", "completedQuestions": bool, "completedChallenges": bool }
+- Postman: http://localhost:5000/gamesSteps
+Body:
+{
+"idGameMatch": 1,
+"idRegion": 2,
+"dateTime": "2024-05-20T18:00:00Z",
+"completedQuestions": true,
+"completedChallenges": false
+}
+
+Atualização (PUT)
+- Endpoint: /gamesSteps/<id>
+- JSON: { "completedQuestions": bool, "completedChallenges": bool }
+- Postman: http://localhost:5000/gamesSteps/1
+Body: (Exemplo: marcando desafios como concluídos)
+{
+"completedChallenges": true
+}
+
+Exclusão (DELETE)
+- Endpoint: /gamesSteps/<id>
+- Postman: http://localhost:5000/gamesSteps/1
+
+Regras Importantes
+- Atualização Parcial: Você pode atualizar apenas o status de conclusão (completedQuestions ou completedChallenges) sem afetar os outros campos.
+- Integridade: O sistema impede a exclusão se houver registros de perguntas ou desafios vinculados a este passo.
+- Padrão de Booleano: Se não enviados no POST, os campos de conclusão iniciam como false.

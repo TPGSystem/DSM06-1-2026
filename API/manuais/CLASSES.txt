@@ -1,0 +1,46 @@
+MANUAL DE INTEGRAÇÃO - CLASSES
+
+Rota de Listagem (GET)
+- Endpoint: /classes
+- Retorno: JSON com dados da turma, descrição da série, componente e professor.
+- Postman: http://localhost:5000/classes
+
+Listagem por Professor (GET)
+- Endpoint: /classes/teacher/<id_teacher>
+- Retorno: Array de objetos com o mesmo formato da listagem geral.
+- Postman: http://localhost:5000/classes/teacher/1
+
+Consulta por ID (GET)
+- Endpoint: /classes/<id>
+- Retorno: JSON com os dados detalhados de uma turma específica.
+- Postman: http://localhost:5000/classes/1
+
+Cadastro (POST)
+- Endpoint: /classes
+- JSON: { "schoolYear": 2024, "idYearSerie": 1, "idComponent": 1, "idTeacher": 1 }
+- Postman: http://localhost:5000/classes
+Body:
+{
+"schoolYear": 2024,
+"idYearSerie": 1,
+"idComponent": 2,
+"idTeacher": 1
+}
+
+Atualização (PUT)
+- Endpoint: /classes/<id>
+- JSON: { "schoolYear": int, "idYearSerie": int, "idComponent": int, "idTeacher": int }
+- Postman: http://localhost:5000/classes/1
+Body: (Exemplo para alterar apenas o professor)
+{
+"idTeacher": 3
+}
+
+Exclusão (DELETE)
+- Endpoint: /classes/<id>
+- Postman: http://localhost:5000/classes/1
+
+Regras Importantes
+- Atualização Parcial: Ao usar PUT, os campos não enviados no JSON manterão seus valores originais no banco.
+- Integridade: Uma classe não pode ser excluída se houver alunos vinculados a ela ou se houver registros na tabela de Games.
+- Descrições Automáticas: Os campos "dsYearSerie", "dsComponent" e "dsTeacher" são gerados automaticamente através dos relacionamentos do banco de dados.

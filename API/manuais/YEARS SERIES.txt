@@ -1,0 +1,39 @@
+MANUAL DE INTEGRAÇÃO - YEARS SERIES
+
+Rota de Listagem (GET)
+- Endpoint: /yearsSeries
+- Retorno: JSON com a lista de anos e séries cadastrados.
+- Postman: http://localhost:5000/yearsSeries
+
+Consulta por ID (GET)
+- Endpoint: /yearsSeries/<id>
+- Postman: http://localhost:5000/yearsSeries/1
+
+Cadastro (POST)
+- Endpoint: /yearsSeries
+- JSON: { "year": int, "serie": "string", "descryption": "string" }
+- Postman: http://localhost:5000/yearsSeries
+Body:
+{
+"year": 9,
+"serie": "A",
+"descryption": "9º Ano A - Ensino Fundamental"
+}
+
+Atualização (PUT)
+- Endpoint: /yearsSeries/<id>
+- JSON: { "year": int, "serie": "string", "descryption": "string" }
+- Postman: http://localhost:5000/yearsSeries/1
+Body: (Exemplo: alterando apenas a descrição)
+{
+"descryption": "9º Ano A - Matutino"
+}
+
+Exclusão (DELETE)
+- Endpoint: /yearsSeries/<id>
+- Postman: http://localhost:5000/yearsSeries/1
+
+Regras Importantes
+- Atualização Parcial: Se um campo não for enviado no Body do PUT, o valor original será preservado.
+- Integridade: O sistema bloqueia a exclusão caso o Ano/Série esteja vinculado a uma Classe ou a Habilidades por Questão (questionsSkills).
+- Formatação: O campo serie é limitado a 10 caracteres conforme o modelo de banco de dados.

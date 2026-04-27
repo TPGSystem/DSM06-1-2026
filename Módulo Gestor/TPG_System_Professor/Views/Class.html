@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-5 min-vh-100">
+    <div class="row">
+        <table class="table table-hover table-striped-columns">
+            <thead>
+                <tr>
+                  <th scope="col">Ano de Registro</th>
+                  <th scope="col">Ano/Serie</th>
+                  <th scope="col">Componente</th>
+                  <th scope="col">Professor</th>
+                  <th scope="col">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for class in classes %}
+                <tr>
+                  <th scope="row">{{class.schoolYear}}</th>
+                  <td hidden>{{class.id}}</td>
+                  <td>{{class.idYearSerie}}</td>
+                  <td>{{class.idComponent}}</td>
+                  <td>{{class.idTeacher}}</td>
+                  <td colspan="2">
+                    <a href="{{url_for('editClass', id=class.id)}}" class="btn" style="background-color: #5491C7;"><img src="../static/imgs/Vector(3).png" alt="Editar" style="width: 22px; height: 20px;"></a>
+                    <a href="{{url_for('dclass', id=class.id)}}" class="btn" style="background-color: #FE4D4D;"><img src="../static/imgs/Vector(4).png" alt="Deletar" style="width: 22px; height: 20px;"></a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock content %}

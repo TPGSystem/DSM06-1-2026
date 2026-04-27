@@ -1,0 +1,40 @@
+MANUAL DE INTEGRAÇÃO - GAMESQUESTIONS
+
+Rota de Listagem (GET)
+- Endpoint: /gamesQuestions
+- Retorno: JSON com o histórico de questões respondidas nos passos dos jogos.
+- Postman: http://localhost:5000/gamesQuestions
+
+Consulta por ID (GET)
+- Endpoint: /gamesQuestions/<id>
+- Postman: http://localhost:5000/gamesQuestions/1
+
+Cadastro (POST)
+- Endpoint: /gamesQuestions
+- JSON: { "idGamesSteps": int, "idQuestion": int, "dateTime": "ISOString", "points": int }
+- Postman: http://localhost:5000/gamesQuestions
+Body:
+{
+"idGamesSteps": 10,
+"idQuestion": 5,
+"dateTime": "2024-05-20T14:30:00Z",
+"points": 15
+}
+
+Atualização (PUT)
+- Endpoint: /gamesQuestions/<id>
+- JSON: { "idGamesSteps": int, "idQuestion": int, "points": int }
+- Postman: http://localhost:5000/gamesQuestions/1
+Body: (Exemplo: atualizando apenas a pontuação)
+{
+"points": 20
+}
+
+Exclusão (DELETE)
+- Endpoint: /gamesQuestions/<id>
+- Postman: http://localhost:5000/gamesQuestions/1
+
+Regras Importantes
+- Atualização Parcial: Se um campo não for enviado no JSON do PUT, o valor original será mantido no banco de dados.
+- Data e Hora: O campo dateTime é gerado automaticamente se não for enviado, mas pode ser sobrescrito via POST/PUT.
+- Consistência: Verifique se o idGamesSteps e o idQuestion existem antes de tentar cadastrar um novo registro.

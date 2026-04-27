@@ -1,0 +1,50 @@
+MANUAL DE INTEGRAÇÃO - QUESTIONS
+
+Rota de Listagem (GET)
+- Endpoint: /questions
+- Retorno: JSON com a lista de questões, incluindo descrições de Tipo, Região, Tema e as 4 Validações.
+- Postman: http://localhost:5000/questions
+
+Consulta por ID (GET)
+- Endpoint: /questions/<id>
+- Postman: http://localhost:5000/questions/1
+
+Cadastro (POST)
+- Endpoint: /questions
+- JSON: { "idQuestionType": int, "idRegion": int, "idTheme": int, "question": "string", "response1": "string", ..., "idValidation1": int, ... }
+- Postman: http://localhost:5000/questions
+Body: ```json
+{
+"idQuestionType": 1,
+"idRegion": 2,
+"idTheme": 5,
+"question": "Qual a capital do Brasil?",
+"response1": "Brasília",
+"response2": "Rio de Janeiro",
+"response3": "São Paulo",
+"response4": "Salvador",
+"idValidation1": 1,
+"idValidation2": 2,
+"idValidation3": 2,
+"idValidation4": 2
+}
+
+Atualização (PUT)
+- Endpoint: /questions/<id>
+- JSON: Envie apenas os campos que deseja alterar (suporta atualização parcial).
+- Postman: http://localhost:5000/questions/1
+Body (Exemplo: alterando apenas o texto da pergunta):
+JSON
+{
+  "question": "Qual o maior estado do Brasil em território?"
+}
+
+Exclusão (DELETE)
+- Endpoint: /questions/<id>
+- Postman: http://localhost:5000/questions/1
+
+Regras Importantes
+- Integridade de Dados: O sistema impede a exclusão de questões que já possuam vínculos na tabela de associação QuestionsSkills.
+- Atualização Parcial: Caso campos como picture ou response não sejam enviados no PUT, os valores originais do banco de dados são preservados.
+- Validações Obrigatórias: Para o cadastro (POST), os IDs de validação (1 a 4) são obrigatórios para garantir a consistência das respostas.
+- Padronização: Todos os campos de ID seguem a nomenclatura do Model (ex: idValidation1).

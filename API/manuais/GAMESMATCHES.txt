@@ -1,0 +1,45 @@
+MANUAL DE INTEGRAÇÃO - GAMESMATCHES
+
+Rota de Listagem (GET)
+- Endpoint: /gamesMatches
+- Retorno: JSON com a lista de partidas e pontuações detalhadas.
+- Postman: http://localhost:5000/gamesMatches
+
+Consulta por ID (GET)
+- Endpoint: /gamesMatches/<id>
+- Postman: http://localhost:5000/gamesMatches/1
+
+Cadastro (POST)
+- Endpoint: /gamesMatches
+- JSON: { "idGame": int, "idCharacter": int, "name": "string", "scorePoints": int, ... }
+- Postman: http://localhost:5000/gamesMatches
+Body:
+{
+"idGame": 1,
+"idCharacter": 2,
+"name": "Partida Inicial Épica",
+"scorePoints": 100,
+"scoreStrength": 10,
+"scoreAgility": 5,
+"scoreResistance": 8,
+"scoreWisdom": 12
+}
+
+Atualização (PUT)
+- Endpoint: /gamesMatches/<id>
+- JSON: Envie apenas os campos de pontuação ou nome que deseja alterar.
+- Postman: http://localhost:5000/gamesMatches/1
+Body: (Exemplo: atualizando pontos e sabedoria)
+{
+"scorePoints": 150,
+"scoreWisdom": 15
+}
+
+Exclusão (DELETE)
+- Endpoint: /gamesMatches/<id>
+- Postman: http://localhost:5000/gamesMatches/1
+
+Regras Importantes
+- Atualização Parcial: O método PUT preserva os valores originais de qualquer campo não enviado no Body.
+- Integridade de Dados: O sistema impede a exclusão se houver registros vinculados em Questões, Desafios ou Passos da Partida.
+- Valores Iniciais: Caso não sejam informados no POST, todos os scores (scorePoints, scoreStrength, etc.) iniciam em 0.

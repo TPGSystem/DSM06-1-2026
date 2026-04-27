@@ -1,0 +1,24 @@
+MANUAL DE INTEGRAÇÃO - CHARACTERS
+
+Rota de Listagem (GET)
+- Endpoint: /characters
+- Retorno: JSON com a lista de personagens e seus atributos de RPG (Força, Agilidade, Resistência e Sabedoria).
+- Postman: http://localhost:5000/characters
+
+Consulta por ID (GET)
+- Endpoint: /characters/<id>
+- Postman: http://localhost:5000/characters/1
+
+Script de Carga (Seed Inicial)
+Estes dados são essenciais para o funcionamento do jogo e devem ser inseridos na criação da base:
+- SQL
+INSERT INTO Characters (number, idValidation, scoreStrength, scoreAgility, scoreResistance, scoreWisdom)
+VALUES
+(1, 3, 5, 15, 10, 10),
+(3, 4, 10, 15, 10, 5),
+(3, 5, 15, 10, 5, 10);
+
+Regras Importantes
+- Somente Leitura: Esta rota não permite criação, edição ou exclusão via API para garantir a integridade dos atributos balanceados do jogo.
+- Atributos: As pontuações de cada atributo influenciam diretamente na jogabilidade das partidas vinculadas.
+- Validação: O campo dsValidation indica o tipo de validação pedagógica associada a este personagem específico.

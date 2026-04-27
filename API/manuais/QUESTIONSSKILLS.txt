@@ -1,0 +1,41 @@
+MANUAL DE INTEGRAÇÃO - QUESTIONS SKILLS
+
+Rota de Listagem (GET)
+- Endpoint: /questionsSkills
+- Retorno: JSON com vínculo entre questão e habilidade, incluindo descrições (dsQuestion, dsSkill, dsYearSerie).
+- Postman: http://localhost:5000/questionsSkills
+
+Consulta por ID (GET)
+- Endpoint: /questionsSkills/<id>
+- Postman: http://localhost:5000/questionsSkills/1
+
+Cadastro (POST)
+- Endpoint: /questionsSkills
+- JSON: { "idQuestion": int, "idSkill": int, "idYearSerie": int, "difficulty": int, "available": bool }
+- Postman: http://localhost:5000/questionsSkills
+Body:
+{
+"idQuestion": 10,
+"idSkill": 5,
+"idYearSerie": 2,
+"difficulty": 3,
+"available": true
+}
+
+Atualização (PUT)
+- Endpoint: /questionsSkills/<id>
+- JSON: Envie apenas os campos que deseja alterar.
+- Postman: http://localhost:5000/questionsSkills/1
+Body: (Exemplo: alterando apenas a disponibilidade)
+{
+"available": false
+}
+
+Exclusão (DELETE)
+- Endpoint: /questionsSkills/<id>
+- Postman: http://localhost:5000/questionsSkills/1
+
+Regras Importantes
+- Dificuldade: O campo difficulty costuma aceitar valores inteiros (ex: 1 a 5).
+- Disponibilidade: O campo available define se a questão está pronta para ser usada em jogos/testes.
+- Atualização Parcial: Se um campo não for enviado no JSON, o valor original será mantido.

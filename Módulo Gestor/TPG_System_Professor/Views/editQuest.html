@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% block content %}
+
+      <!-- Editar questão -->
+      <div class="container mt-5">
+        <div class="row d-flex justify-content-center">
+            <!-- Formulário -->
+            <div class="col-md-8 border border-3" style="border-color: #bcbcbc; border-radius: 20px; height: auto;">
+                <div class="fw-bold text-center mt-5" style="font-size: 25px;">Editar Questão</div>
+                <div class="container d-flex justify-content-center">
+                    <form action="{{url_for('updatequestion', id=question.id)}}" method="post" class="row mt-4 mb-5" style="width: 75%;">
+                        <div class="mt-3">
+                            <label class="form-label fw-bold">Tema:</label>
+                            <select class="form-select" name="theme">
+                                {% for theme in themes %}
+                                    <option value="{{ theme.id }}"
+                                        {% if theme.id == question.idTheme %} selected {% endif %}>
+                                        {{ theme.descryption }}
+                                    </option>
+                                {% endfor %}
+                            </select>                            
+                        </div>
+                        <div class="mt-3">
+                            <label class="form-label fw-bold">Tipo da Questão:</label>
+                            <select class="form-select" name="questionType">
+                                {% for questType in questTypes %}
+                                    <option value="{{ questType.id }}"
+                                        {% if questType.id == question.idQuestionType %} selected {% endif %}>
+                                        {{ questType.descryption }}
+                                    </option>
+                                {% endfor %}
+                            </select>  
+                        </div>
+                        <div class="mt-3">
+                            <label class="form-label fw-bold">Região:</label>
+                            <select class="form-select" name="region">
+                                {% for region in regions %}
+                                    <option value="{{ region.id }}"
+                                        {% if region.id == question.idRegion %} selected {% endif %}>
+                                        {{ region.descryption }}
+                                    </option>
+                                {% endfor %}
+                            </select>  
+                        </div>                            
+                        <div class="mt-3">
+                            <label class="form-label fw-bold">Questão:</label>
+                            <input type="text" name="question" class="form-control" value="{{question.question}}">
+                        </div>
+                        <div class="mt-3">
+                            <label class="form-label fw-bold">Resposta 1:</label>
+                            <input type="text" name="response1" class="form-control" value="{{question.response1}}">
+                        </div>
+                        <div class="mt-3">
+                            <label class="form-label fw-bold">Resposta 2:</label>
+                            <input type="text" name="response2" class="form-control" value="{{question.response2}}">
+                        </div>
+                        <div class="mt-3">
+                            <label class="form-label fw-bold">Resposta 3:</label>
+                            <input type="text" name="response3" class="form-control" value="{{question.response3}}">
+                        </div>
+                        <div class="mt-3">
+                            <label class="form-label fw-bold">Resposta 4:</label>
+                            <input type="text" name="response4" class="form-control" value="{{question.response4}}">
+                        </div>
+                        <div class="mt-3">
+                            <label class="form-label fw-bold">Foto 1:</label>
+                            <input class="form-control" type="file" name="picture1">
+                            <input type="hidden" name="picture1_current" value="{{ question.picture1 }}">
+                            <small class="text-muted">
+                                {{ question.picture1 or 'Nenhuma imagem cadastrada' }}
+                            </small>
+                        </div>
+                        <div class="mt-3">
+                            <label class="form-label fw-bold">Foto 2:</label>
+                            <input class="form-control" type="file" name="picture2">
+                            <input type="hidden" name="picture2_current" value="{{ question.picture2 }}">
+                            <small class="text-muted">
+                                {{ question.picture2 or 'Nenhuma imagem cadastrada' }}
+                            </small>
+                        </div>
+                        <div class="mt-3">
+                            <label class="form-label fw-bold">Foto 3:</label>
+                            <input class="form-control" type="file" name="picture3">
+                            <input type="hidden" name="picture3_current" value="{{ question.picture3 }}">
+                            <small class="text-muted">
+                                {{ question.picture3 or 'Nenhuma imagem cadastrada' }}
+                            </small>
+                        </div>
+                        <div class="mt-3">
+                            <label class="form-label fw-bold">Foto 4:</label>
+                            <input class="form-control" type="file" name="picture4">
+                            <input type="hidden" name="picture4_current" value="{{ question.picture4 }}">
+                            <small class="text-muted">
+                                {{ question.picture4 or 'Nenhuma imagem cadastrada' }}
+                            </small>
+                        </div>
+                        <div class="mt-3">
+                            <label class="form-label fw-bold">Validação 1:</label>
+                            <select class="form-select" name="validation1">
+                                {% for validation in validations %}
+                                    <option value="{{ validation.id }}"
+                                        {% if validation.id == question.idValidation1 %} selected {% endif %}>
+                                        {{ validation.descryption }}
+                                    </option>
+                                {% endfor %}
+                            </select>                     
+                        </div>
+                        <div class="mt-3">
+                            <label class="form-label fw-bold">Validação 2:</label>
+                            <select class="form-select" name="validation2">
+                                {% for validation in validations %}
+                                    <option value="{{ validation.id }}"
+                                        {% if validation.id == question.idValidation2 %} selected {% endif %}>
+                                        {{ validation.descryption }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mt-3">
+                            <label class="form-label fw-bold">Validação 3:</label>
+                            <select class="form-select" name="validation3">
+                                {% for validation in validations %}
+                                    <option value="{{ validation.id }}"
+                                        {% if validation.id == question.idValidation3 %} selected {% endif %}>
+                                        {{ validation.descryption }}
+                                    </option>
+                                {% endfor %}
+                            </select>  
+                        </div>
+                        <div class="mt-3">
+                            <label class="form-label fw-bold">Validação 4:</label>
+                            <select class="form-select" name="validation4">
+                                {% for validation in validations %}
+                                    <option value="{{ validation.id }}"
+                                        {% if validation.id == question.idValidation4 %} selected {% endif %}>
+                                        {{ validation.descryption }}
+                                    </option>
+                                {% endfor %}
+                            </select>  
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            <input type="submit" value="Cadastrar" class="mt-5 btn text-white fw-bold" style="background-color: #5491C7; width: 190px;">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- Fim formulário -->
+        </div>
+    </div>
+<!-- Fim editar questão -->
+
+{% endblock content %}

@@ -1,0 +1,37 @@
+MANUAL DE INTEGRAÇÃO - THEMES
+
+Rota de Listagem (GET)
+- Endpoint: /themes
+- Retorno: JSON com a lista de temas cadastrados.
+- Postman: http://localhost:5000/themes
+
+Consulta por ID (GET)
+- Endpoint: /themes/<id>
+- Postman: http://localhost:5000/themes/1
+
+Cadastro (POST)
+- Endpoint: /themes
+- JSON: { "descryption": "string" }
+- Postman: http://localhost:5000/themes
+Body:
+{
+"descryption": "Álgebra Linear"
+}
+
+Atualização (PUT)
+- Endpoint: /themes/<id>
+- JSON: { "descryption": "string" }
+- Postman: http://localhost:5000/themes/1
+Body:
+{
+"descryption": "Álgebra Linear Avançada"
+}
+
+Exclusão (DELETE)
+- Endpoint: /themes/<id>
+- Postman: http://localhost:5000/themes/1
+
+Regras Importantes
+- Atualização Parcial: No método PUT, se o campo descryption não for enviado, o valor atual do banco de dados será mantido.
+- Integridade de Dados: O sistema impede a exclusão de temas que possuam vínculos com a tabela de Questões (Questions).
+- Persistência: Todas as alterações são confirmadas no banco via commit do SQLAlchemy.

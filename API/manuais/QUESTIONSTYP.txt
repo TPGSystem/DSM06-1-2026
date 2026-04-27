@@ -1,0 +1,22 @@
+MANUAL DE INTEGRAÇÃO - QUESTIONSTYPES
+
+Rota de Listagem (GET)
+- Endpoint: /questionstypes
+- Retorno: JSON com a lista de tipos de questões configurados no sistema.
+- Postman: http://localhost:5000/questionstypes
+
+Consulta por ID (GET)
+- Endpoint: /questionstypes/<id>
+- Postman: http://localhost:5000/questionstypes/1
+
+Script de Carga (Seed Inicial)
+Execute este script para definir as categorias de questões:
+- SQL
+INSERT INTO QuestionsTypes (descryption)
+VALUES
+('Etnia'),
+('Opção');
+
+Regras Importantes
+- Acesso Somente Leitura: Esta tabela define o comportamento da interface de perguntas. Alterações devem ser feitas via script de banco para evitar quebras na renderização do Front-end.
+- Dependência: Esta tabela é referenciada pela tabela principal de Questions. Sem estes registros, não é possível categorizar novas perguntas.
