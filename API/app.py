@@ -18,6 +18,7 @@ from routes.gamesMatches import gamesMatches
 from routes.gamesChallenges import gamesChallenges
 from routes.gamesSteps import gamesSteps
 from routes.play import play
+from routes.reports import reports
 
 # Usar o banco MySQL
 import pymysql
@@ -32,7 +33,7 @@ from models.database import db
 from database.seeds import DataSeeder
 
 # Importar o CORS para permitir requisições de outros domínios
-# from flask_cors import CORS
+from flask_cors import CORS
 
 # Criando a instância do Flask
 app = Flask(__name__)  
@@ -56,6 +57,7 @@ app.register_blueprint(gamesMatches)
 app.register_blueprint(gamesChallenges)
 app.register_blueprint(gamesSteps)
 app.register_blueprint(play)
+app.register_blueprint(reports)
 
 # Define o nome do banco de dados
 if app.config.get('TESTING') or 'pytest' in sys.modules:
@@ -67,13 +69,14 @@ app.config['DATABASE_NAME'] = DB_NAME
 
 # Configuração do banco de dados MySQL
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://root@localhost/{DB_NAME}' 
+## app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://root:masterkey@localhost/{DB_NAME}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  
 
 # Configuração da chave secreta para sessões
 app.config['SECRET_KEY'] = 'tpgsystem'
 
 # Permitir CORS
-# CORS(app)  # Permite que o backend Flask aceite requisições de outros domínios
+CORS(app)  
 
 db.init_app(app)
 
@@ -85,6 +88,7 @@ if __name__ == '__main__':
             host='localhost',
             user='root',
             password='',  
+            ## password='masterkey',  
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
         )

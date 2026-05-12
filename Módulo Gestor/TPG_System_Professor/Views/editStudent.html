@@ -28,7 +28,6 @@
                         <div class="mt-3">
                             <label class="form-label fw-bold">Classe:</label>
                             <select class="form-select" name="classe">
-                                <option selected>Selecione uma Classe</option>
                                 {% for class in classes %}
                                     <option value="{{class.id}}"
                                         {% if class.id == student.idClass %} selected {% endif %}>

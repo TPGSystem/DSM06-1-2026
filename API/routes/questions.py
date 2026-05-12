@@ -25,6 +25,15 @@ def create_():
         if field not in data:
             return jsonify({'error': f'Campo {field} é obrigatório'}), 400
 
+    # Verifica se os campos picutres estão vazio e converte para binário
+    def normalize_picture(val):
+        if val in ('', None):
+            return None  # ou b''
+        return val if isinstance(val, bytes) else val.encode('utf-8')
+
+    for key in ['picture1', 'picture2', 'picture3', 'picture4']:
+        data[key] = normalize_picture(data.get(key))
+
     rec = create(data['idQuestionType'], data.get('idRegion'), data['idTheme'], data['question'],
                  data.get('response1'), data.get('response2'), data.get('response3'), data.get('response4'),
                  data.get('picture1'), data.get('picture2'), data.get('picture3'), data.get('picture4'),

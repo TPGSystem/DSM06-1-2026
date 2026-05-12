@@ -2,170 +2,404 @@
 {% block content %}
 
 <br><br>
-<div class="container-fluid">
+<div class="container-fluid min-vh-100">
   <div class="row justify-content-center text-center">
     <script src="https://www.gstatic.com/charts/loader.js"></script>
     <script>
-      google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(desenharGraficos);
+      google.charts.load('current', {'packages':['corechart']})
+      google.charts.setOnLoadCallback(atualizarDashboard)
 
-      let alunosGlobais = [];
+      async function atualizarDashboard() {
+        const teacher_id = "{{ session.get('teacher_id', '') }}"
+        const year = new Date().getFullYear()
 
-      async function desenharGraficos() {
-        const resMedias = await fetch('/medias');
-        const resAlunos = await fetch('/dados');
-        const medias = await resMedias.json();
-        const alunos = await resAlunos.json();
-        alunosGlobais = alunos;
+        const class_id = document.getElementById('select_class')?.value
+        const student_id = document.getElementById('select_student')?.value
 
-        // === Select de Turmas ===
-        const turmas = [...new Set(alunos.map(a => a.turma))];
-        const selectTurma = document.getElementById('select_turma');
-        selectTurma.innerHTML = '<option value="">Todas as Turmas</option>';
-        turmas.forEach(t => {
-          const opt = document.createElement('option');
-          opt.value = t;
-          opt.textContent = t;
-          selectTurma.appendChild(opt);
-        });
+        let url = `http://localhost:5000/reports/performance?teacher_id=${teacher_id}&year=${year}`
 
-        // === Select de Alunos ===
-        atualizarSelectAlunos(alunos);
+        if (class_id) url += `&class_id=${class_id}`
+        if (student_id) url += `&student_id=${student_id}`
 
-        // === Gráfico 1: Média por Turma ===
-        const dataTurmas = new google.visualization.DataTable();
-        dataTurmas.addColumn('string', 'Turma');
-        dataTurmas.addColumn('number', 'Média');
-        dataTurmas.addColumn('number', 'Meta');
+        try {
+          const response = await fetch(url)
 
-        medias.turmas.forEach(t => dataTurmas.addRow([t.turma, t.media, medias.meta]));
+          if (!response.ok) {
+            console.error("Erro da API")
+            return
+          }
 
-        const optTurmas = {
-          title: 'Média por Turma',
-          titleTextStyle: { fontSize: 22, bold: true },
-          legend: { position: 'bottom', textStyle: { fontSize: 18 } },
-          chartArea: { width: '80%', height: '70%' },
-          vAxis: { minValue: 0, maxValue: 100, textStyle: { fontSize: 15 } },
-          hAxis: { textStyle: { fontSize: 15 } },
-          width: 500,
-          height: 420
-        };
+          const data = await response.json()
 
-        new google.visualization.LineChart(document.getElementById('grafico_turmas'))
-          .draw(dataTurmas, optTurmas);
+          limparGraficos()
 
-        desenharGraficoAlunos();
-        desenharGraficoQuestoes(); // desenha o gráfico vazio inicial
+          desenharGraficoTemas(data)
+
+        } catch (error) {
+          console.error("Erro:", error)
+        }
       }
 
-      function desenharGraficoAlunos(turmaSelecionada = null) {
-        const dataAlunos = new google.visualization.DataTable();
-        dataAlunos.addColumn('string', 'Aluno');
-        dataAlunos.addColumn('number', 'Nota');
-
-        const alunosFiltrados = turmaSelecionada 
-          ? alunosGlobais.filter(a => a.turma === turmaSelecionada)
-          : alunosGlobais;
-
-        alunosFiltrados.forEach(a => {
-          const nota = (a.nota !== undefined && a.nota !== null) ? a.nota : 0;
-          dataAlunos.addRow([a.nome, nota]);
-        });
-
-        const optAlunos = {
-          title: turmaSelecionada ? `Notas dos Alunos - ${turmaSelecionada}` : 'Notas dos Alunos (todas as turmas)',
-          titleTextStyle: { fontSize: 22, bold: true },
-          legend: { position: 'none' },
-          chartArea: { width: '80%', height: '70%' },
-          vAxis: { minValue: 0, maxValue: 100, textStyle: { fontSize: 18 } },
-          hAxis: { textStyle: { fontSize: 18, slantedText: true, slantedTextAngle: 45 } },
-          width: 500,
-          height: 420
-        };
-
-        new google.visualization.ColumnChart(document.getElementById('grafico_alunos'))
-          .draw(dataAlunos, optAlunos);
-
-        atualizarSelectAlunos(alunosFiltrados);
+      function limparGraficos() {
+        const div = document.getElementById('grafico_temas')
+        div.innerHTML = "" // limpa gráfico antigo
       }
 
-      function desenharGraficoQuestoes(alunoNome = null) {
-        const dataQuestoes = new google.visualization.DataTable();
-        dataQuestoes.addColumn('string', 'Questão');
-        dataQuestoes.addColumn('number', 'Nota');
+      function desenharGraficoTemas(dataApi) {
+        const data = new google.visualization.DataTable()
 
-        let titulo = 'Desempenho por Questão';
-        let notas = [0, 0, 0, 0, 0]; // padrão quando não há aluno selecionado
+        data.addColumn('string', 'Tema')
+        data.addColumn('number', 'Acertos')
+        data.addColumn('number', 'Erros')
 
-        if (alunoNome) {
-          const aluno = alunosGlobais.find(a => a.nome === alunoNome);
-          if (aluno && aluno.questoes) {
-            notas = aluno.questoes.map(n => (n !== undefined && n !== null ? n : 0));
-            titulo = `Desempenho por Questão - ${aluno.nome}`;
+        if (!dataApi.by_theme || dataApi.by_theme.length === 0) {
+          data.addRow(['Sem dados', 0, 0])
+        } else {
+          dataApi.by_theme.forEach(item => {
+            data.addRow([
+              item.theme,
+              item.hits,
+              item.misses
+            ])
+          })
+        }
+
+        const options = {
+          title: 'Desempenho por Assunto',
+          isStacked: true,
+          colors: ['#4CAF50', '#F44336'],
+          chartArea: { width: '70%', height: '70%' },
+          hAxis: {
+            title: 'Temas',
+            textStyle: { fontSize: 12 }
+          },
+          vAxis: {
+            title: 'Quantidade',
+            minValue: 0
+          },
+          legend: { position: 'top' },
+          width: 600,
+          height: 400
+        }
+
+        const chart = new google.visualization.ColumnChart(
+          document.getElementById('grafico_temas')
+        )
+
+        chart.draw(data, options)
+      }
+    </script>
+<!-- Fim Script Gráfico 1 -->
+
+
+<!-- Script Gráfico 2 -->
+    <script>
+      google.charts.load('current', {'packages':['corechart']})
+      google.charts.setOnLoadCallback(atualizarDashboard2)
+
+      async function atualizarDashboard2() {
+
+        const teacher_id = "{{ session.get('teacher_id','') }}"
+        const year = new Date().getFullYear()
+
+        const class_id = document.getElementById('select_class')?.value
+        const student_id = document.getElementById('select_student')?.value
+
+        let url = `http://localhost:5000/reports/top-errors?teacher_id=${teacher_id}&year=${year}`
+
+        if (class_id) url += `&class_id=${class_id}`
+        if (student_id) url += `&student_id=${student_id}`
+
+        try {
+          const response = await fetch(url)
+          if (!response.ok){
+            console.error("Erro da API")
+            return
+          }
+          const apiData = await response.json()
+
+          limparGraficoTop10()
+          desenharGrafico2(apiData)
+
+        } catch (error){
+          console.error("Erro:", error)
+        }
+      }
+
+      function limparGraficoTop10() {
+        document.getElementById('grafico_t10').innerHTML = ""
+      }
+
+      function desenharGrafico2(apiData) {
+        let chartData = [
+          ["Questão", "Total de Erros", { role: "style" }]
+        ]
+
+        if (!apiData || apiData.length === 0) {
+          chartData.push([
+            "Sem dados",
+            0,
+            "#CCCCCC"
+          ])
+
+        } else {
+          apiData.forEach(item => {
+            let titulo = item.question_text.length > 40
+              ? item.question_text.substring(0, 40) + "..."
+              : item.question_text
+
+            let cor = "#4285F4"
+            if (item.difficulty === "Fácil") {
+              cor = "#34A853"
+            }
+            if (item.difficulty === "Média") {
+              cor = "#FBBC05"
+            }
+            if (item.difficulty === "Difícil") {
+              cor = "#EA4335"
+            }
+            chartData.push([
+              titulo,
+              item.total_errors,
+              cor
+            ])
+          })
+        }
+
+        const data = google.visualization.arrayToDataTable(chartData)
+        const view = new google.visualization.DataView(data)
+
+        view.setColumns([
+          0,
+          1,
+          {
+            calc: "stringify",
+            sourceColumn: 1,
+            type: "string",
+            role: "annotation"
+          },
+          2
+        ])
+
+        const options = {
+          title: "Top 10 Questões com Maior Índice de Erro",
+          width: 600,
+          height: 400,
+          legend: { position: "none" },
+          bar: { groupWidth: "75%" },
+
+          hAxis: {
+            title: "Quantidade de Erros",
+            minValue: 0
+          },
+
+          vAxis: {
+            title: "Questões"
+          }
+        }
+        const chart = new google.visualization.BarChart(
+          document.getElementById("grafico_t10")
+        )
+        chart.draw(view, options)
+      }
+
+    </script>
+<!-- Fim Script Gráfico 2 -->
+
+
+<!-- Script Gráfico 3 -->
+    <script>
+      google.charts.load('current', {'packages':['corechart']})
+      google.charts.setOnLoadCallback(atualizarDashboard3)
+
+      async function atualizarDashboard3() {
+
+        const teacher_id = "{{ session.get('teacher_id','') }}"
+        const year = new Date().getFullYear()
+
+        const class_id = document.getElementById('select_class')?.value
+        const student_id = document.getElementById('select_student')?.value
+
+        let url = `http://localhost:5000/reports/evolution?teacher_id=${teacher_id}&year=${year}`
+
+        if (class_id) url += `&class_id=${class_id}`
+        if (student_id) url += `&student_id=${student_id}`
+
+        try {
+          const response = await fetch(url)
+          if (!response.ok){
+            console.error("Erro da API")
+            return
+          } 
+
+          const DataApi = await response.json()
+
+          console.log("DADOS DA API:", DataApi)
+
+          limparGraficoEvo()
+          desenhaGrafico3(DataApi)
+
+        }catch(error) {
+          console.error("Erro:", error)
+        }
+      }
+
+      function limparGraficoEvo(){
+        document.getElementById('grafico_evo').innerHTML = ""
+      }
+
+      function desenhaGrafico3(DataApi) {
+
+        let ChartData = [
+          ["Mês", "Desempenho", "Meta"]
+        ]
+
+        const meta = Number(DataApi.regua_meta)
+
+        if (!DataApi || !DataApi.evolution || DataApi.evolution.length === 0) {
+          ChartData.push(["Sem dados", 0, meta])
+        } else {
+
+          DataApi.evolution.forEach(item => {
+            ChartData.push([
+              item.month_name,
+              Number(item.accuracy_rate),
+              meta
+            ])
+          })
+        }
+
+        const data = google.visualization.arrayToDataTable(ChartData)
+
+        const options = {
+          title: 'Evolução e Meta',
+          hAxis: {
+            title: 'Mês'
+          },
+          vAxis: {
+            minValue: 0,
+            maxValue: 100
+          },
+          areaOpacity: 0.3,
+          series: {
+            1: {
+              type: 'line',
+              color: '#FF0000',
+              lineWidth: 2,
+              lineDashStyle: [4, 4],
+              pointSize: 0
+            }
           }
         }
 
-        notas.forEach((nota, i) => {
-          dataQuestoes.addRow([`Q${i + 1}`, nota]);
-        });
+        const chart = new google.visualization.AreaChart(
+          document.getElementById('grafico_evo')
+        )
 
-        const optQuestoes = {
-          title: titulo,
-          titleTextStyle: { fontSize: 22, bold: true },
-          legend: { position: 'none' },
-          chartArea: { width: '80%', height: '70%' },
-          vAxis: { minValue: 0, maxValue: 20, textStyle: { fontSize: 18 } },
-          hAxis: { textStyle: { fontSize: 18 } },
-          width: 500,
-          height: 420
-        };
-
-        new google.visualization.ColumnChart(document.getElementById('grafico_questoes'))
-          .draw(dataQuestoes, optQuestoes);
-      }
-
-      function filtrarTurma() {
-        const turmaSelecionada = document.getElementById('select_turma').value;
-        desenharGraficoAlunos(turmaSelecionada);
-      }
-
-      function filtrarAluno() {
-        const alunoSelecionado = document.getElementById('select_aluno').value;
-        desenharGraficoQuestoes(alunoSelecionado);
-      }
-
-      function atualizarSelectAlunos(lista) {
-        const selectAluno = document.getElementById('select_aluno');
-        selectAluno.innerHTML = '<option value="">Selecione um Aluno</option>';
-        lista.forEach(a => {
-          const opt = document.createElement('option');
-          opt.value = a.nome;
-          opt.textContent = a.nome;
-          selectAluno.appendChild(opt);
-        });
+        chart.draw(data, options)
       }
     </script>
+<!-- Fim Script Gráfico 3 -->
+
+
+<!-- Scrpit Gráfico 4 -->
+    <script>
+      google.charts.load("current", {packages:["corechart"]});
+      google.charts.setOnLoadCallback(atualizarDashboard4);
+
+      async function atualizarDashboard4() {
+
+        const teacher_id = "{{ session.get('teacher_id','') }}"
+        const year = new Date().getFullYear()
+
+        const class_id = document.getElementById('select_class')?.value
+        const student_id = document.getElementById('select_student')?.value
+
+        let url = `http://localhost:5000/reports/engagement?teacher_id=${teacher_id}&year=${year}`
+
+        if (class_id) url += `&class_id=${class_id}`
+        if (student_id) url += `&student_id=${student_id}`
+
+        try {
+          const response = await fetch(url)
+          if (!response.ok){
+            console.error("Erro da API")
+            return
+          } 
+
+          const DataApi = await response.json()
+
+
+          limparGraficoEng()
+          desenhaGrafico4(DataApi)
+
+        }catch(error) {
+          console.error("Erro:", error)
+        }
+      }
+
+      function limparGraficoEng(){
+        document.getElementById('grafico_eng').innerHTML = ""
+      }
+
+      function desenhaGrafico4(DataApi) {
+
+        const played = Number(DataApi.totals.total_played || 0)
+        const notPlayed = Number(DataApi.totals.total_not_played || 0)
+
+        const data = google.visualization.arrayToDataTable([
+          ["Status", "Quantidade"],
+          ["Acessaram o sistema", played],
+          ["Não acessaram", notPlayed]
+        ])
+
+        const options = {
+          title: 'Engajamento dos Alunos',
+          pieHole: 0.4,
+          colors: ['#4CAF50', '#F44336']
+        }
+
+        const chart = new google.visualization.PieChart(
+          document.getElementById('grafico_eng')
+        )
+
+        chart.draw(data, options)
+      }
+    </script>
+<!-- Fim Script Gráfico 4 -->
+
 
     <!-- Selects -->
     <div class="col-12 mb-4">
-      <label for="select_turma" style="font-size: 22px; font-weight: bold;">Selecione a Turma:</label>
-      <select id="select_turma" onchange="filtrarTurma()" class="form-select w-auto d-inline-block" style="font-size: 15px;">
-        <option>Carregando...</option>
+      <label for="select_class" style="font-size: 22px; font-weight: bold;">Selecione a Turma:</label>
+      <select id="select_class" onchange="atualizarDashboard(),atualizarDashboard2(),atualizarDashboard3()" class="form-select w-auto d-inline-block" style="font-size: 15px;">
+        <option value="" selected>Selecionar Turma</option>
+        {% for class in classes %}
+        <option value="{{class.id}}">
+          {{class.idYearSerie}}
+        </option>
+        {% endfor %}
       </select>
 
       &nbsp;&nbsp;&nbsp;
 
-      <label for="select_aluno" style="font-size: 22px; font-weight: bold;">Selecione o Aluno:</label>
-      <select id="select_aluno" onchange="filtrarAluno()" class="form-select w-auto d-inline-block" style="font-size: 15px;">
-        <option>Carregando...</option>
+      <label for="select_student" style="font-size: 22px; font-weight: bold;">Selecione o Aluno:</label>
+      <select id="select_student" onchange="atualizarDashboard(),atualizarDashboard2(),atualizarDashboard3()" class="form-select w-auto d-inline-block" style="font-size: 15px;">
+        <option value="" selected>Selecionar Aluno</option>
+        {% for student in students %}
+        <option value="{{student.id}}">
+          {{student.name}}
+        </option>
+        {% endfor %}
       </select>
     </div>
 
     <!-- Gráficos lado a lado -->
     <div class="d-flex flex-wrap justify-content-center gap-3">
-      <div id="grafico_turmas" class="bg-white rounded shadow"></div>
-      <div id="grafico_alunos" class="bg-white rounded shadow"></div>
-      <div id="grafico_questoes" class="bg-white rounded shadow"></div>
+      <div id="grafico_temas" class="bg-white rounded shadow" style="width: 600px; height: 400px;"></div>
+      <div id="grafico_t10" class="bg-white rounded shadow" style="width: 600px; height: 400px;"></div>
+      <div id="grafico_evo" class="bg-white rounded shadow" style="width: 600px; height: 400px;"></div>
+      <div id="grafico_eng" class="bg-white rounded shadow" style="width: 600px; height: 400px;"></div>
     </div>
 
   </div>

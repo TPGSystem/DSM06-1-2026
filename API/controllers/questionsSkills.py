@@ -5,9 +5,9 @@ def get_all():
     return [{
         'id': rec.id, 
         'idQuestion': rec.idQuestion,
-        'dsQuestion': rec.question.descryption if rec.question else None,
+        'dsQuestion': rec.question.question if rec.question else None,
         'idSkill': rec.idSkill,
-        'dsSkill': rec.skill.descryption if rec.skill else None,
+        'dsSkill': rec.skill.skill if rec.skill else None,
         'idYearSerie': rec.idYearSerie,
         'dsYearSerie': rec.yearserie.descryption if rec.yearserie else None, # Corrigido para match com relationship
         'difficulty': rec.difficulty, 
@@ -20,9 +20,9 @@ def get_by_id(id):
         return {
             'id': rec.id, 
             'idQuestion': rec.idQuestion,
-            'dsQuestion': rec.question.descryption if rec.question else None,
+            'dsQuestion': rec.question.question if rec.question else None,
             'idSkill': rec.idSkill,
-            'dsSkill': rec.skill.descryption if rec.skill else None,
+            'dsSkill': rec.skill.skill if rec.skill else None,
             'idYearSerie': rec.idYearSerie,
             'dsYearSerie': rec.yearserie.descryption if rec.yearserie else None,
             'difficulty': rec.difficulty,

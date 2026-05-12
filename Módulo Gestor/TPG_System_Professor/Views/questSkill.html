@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-5 min-vh-100">
+    <div class="row">
+        <table class="table table-hover table-striped-columns">
+            <thead>
+                <tr>
+                  <th scope="col">Questão</th>
+                  <th scope="col">Habilidade</th>
+                  <th scope="col">Ano/Serie</th>
+                  <th scope="col">Dificuldade</th>
+                  <th scope="col">Disponível</th>
+                  <th scope="col">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for qskill in qskills %}
+                <tr>
+                  <td hidden>{{qskill.id}}</td>
+                  <!-- <th scope="row">{{qskill.idQuestion}}</th> -->
+                  <th scope="row">{{qskill.dsQuestion}}</td>
+                  <!-- <td>{{qskill.idSkill}}</td> -->
+                  <td>{{qskill.dsSkill}}</td>
+                  <!-- <td>{{qskill.idYearSerie}}</td> -->
+                  <td>{{qskill.dsYearSerie}}</td>
+                  <td>{{qskill.difficulty}}</td>
+                  <td>{{qskill.available}}</td>
+                  <td colspan="2">
+                    <a href="{{url_for('editQskill',id=qskill.id)}}" class="btn" style="background-color: #5491C7;"><img src="../static/imgs/Vector(3).png" alt="Editar" style="width: 22px; height: 20px;"></a>
+                    <a href="{{url_for('dQskill',id=qskill.id)}}" class="btn" style="background-color: #FE4D4D;"><img src="../static/imgs/Vector(4).png" alt="Deletar" style="width: 22px; height: 20px;"></a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock content %}

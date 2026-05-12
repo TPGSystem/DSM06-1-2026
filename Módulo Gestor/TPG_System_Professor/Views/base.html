@@ -30,6 +30,7 @@
                   <li><a class="dropdown-item" href="{{url_for('cadstudent')}}">Aluno</a></li>
                   <li><a class="dropdown-item" href="{{url_for('cadclass')}}">Turma</a></li>
                   <li><a class="dropdown-item" href="{{url_for('cadquest')}}">Questões</a></li>
+                  <li><a class="dropdown-item" href="{{url_for('cadQskill')}}">Habilidade Questões</a></li>
                 </ul>
               </li>
               <li class="nav-item dropdown ms-3">
@@ -41,9 +42,16 @@
                   <li><a class="dropdown-item" href="{{url_for('student')}}">Aluno</a></li>
                   <li><a class="dropdown-item" href="{{url_for('cclass')}}">Turma</a></li>
                   <li><a class="dropdown-item" href="{{url_for('quest')}}">Questões</a></li>
+                  <li><a class="dropdown-item" href="{{url_for('qskill')}}">Habilidade Questões</a></li>
                 </ul>
               </li>
-              <li class="nav-item dropdown">
+            </ul>
+          </div>
+          <div class="col-1 content-end">
+            {% if 'teacher_id' not in session: %}
+                <a class="nav-item ms-3 fs-5 fw-bold btn text-white" href="{{url_for('login')}}" style="background-color: #5491C7;">Login</a>
+            {% else %}
+              <div class="nav-item dropdown">
                 <a class="nav-link dropdown fw-bold" style="font-size: 19px;" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                   <img src="../static/imgs/Group 4.png" alt="cadastro" style="height: 40px;width: 40px;">
                 </a>
@@ -51,11 +59,8 @@
                   <li><a class="dropdown-item" href="#">Perfil</a></li>
                   <li><a class="dropdown-item" href="{{url_for('logout')}}">Sair</a></li>
                 </ul>
-              </li>
-              <li class="nav-item ms-3">
-                <a class="nav-link fs-5 fw-bold" href="{{url_for('login')}}" >Login</a>
-              </li>
-            </ul>
+              </div>
+            {% endif %}
           </div>
         </div>
       </nav>

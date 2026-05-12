@@ -1,0 +1,127 @@
+MANUAL DE INTEGRAÇÃO - REPORTS
+
+Este módulo fornece dados agregados para o Dashboard do Professor, permitindo análises de desempenho, engajamento e evolução pedagógica.Base URL: /reportsParâmetros Comuns: * teacher_id (Obrigatório): ID do professor logado.year (Obrigatório): Ano letivo de referência (Ex: 2026).class_id (Opcional): Filtra os dados por uma turma específica.student_id (Opcional): Filtra os dados de um aluno (Requer class_id).
+
+Desempenho por Assunto - Retorna o total de questões respondidas, acertos e erros agrupados por tema, ordenados pelos assuntos com maior índice de erro
+- Endpoint: GET /reports/performance
+- Postman: GET http://localhost:5000/reports/performance?teacher_id=1&year=2026&class_id=10&student_id=42
+- Retorno
+{
+  "by_theme": [
+    {
+      "theme": "Sintaxe Python",
+      "total": 120,
+      "hits": 40,
+      "misses": 80,
+      "accuracy_rate": 33.33
+    }
+  ],
+  "general_summary": {
+    "total": 120,
+    "hits": 40,
+    "misses": 80
+  }
+}
+
+
+Relatório de Engajamento (GET) - Lista a quantidade de alunos ativos (que jogaram) vs. inativos, com resumo por turma e relação nominal de nomes.
+- Endpoint: GET /reports/engagement
+- Postman: GET http://localhost:5000/reports/engagement?teacher_id=1&year=2026
+- Retorno
+{
+  "totals": {
+    "total_students": 40,
+    "total_played": 38,
+    "total_not_played": 2
+  },
+  "summary_by_class": [
+    {
+      "class_name": "9º Ano A",
+      "total_students": 20,
+      "played": 19,
+      "not_played": 1
+    }
+  ],
+  "details": {
+    "played": [{"id": 1, "name": "Gilberto Satyro", "class": "9º Ano A"}],
+    "not_played": [{"id": 5, "name": "Aluno Exemplo", "class": "9º Ano A"}]
+  }
+}
+
+
+Top 10 Questões com mais Erros - Lista as 10 questões com maior volume de erros. A coluna difficulty só é retornada se o class_id for informado
+- Endpoint: GET /reports/top-erros
+- Postman:  GET http://localhost:5000/reports/top-errors?teacher_id=1&year=2026&class_id=10&student_id=42
+- Retorno
+[
+  {
+    "id": 15,
+    "question_text": "O que é um JOIN em SQL?",
+    "theme": "Banco de Dados",
+    "total_errors": 25,
+    "difficulty": "Média" 
+  }
+]
+
+
+Evolução Mensal - Fornece o percentual de acertos mês a mês. Aceita filtro opcional de tema (theme_id). A regua é um valor de referência visual para o gráfico.
+- Endpoint: GET /reports/evolution
+- Postman:  GET http://localhost:5000/reports/evolution?teacher_id=1&year=2026&class_id=10&student_id=42&theme_id=3&regua=75.0
+- Retorno
+{
+  "evolution": [
+    {
+      "month_number": 2,
+      "month_name": "Fev",
+      "total_questions": 50,
+      "hits": 30,
+      "accuracy_rate": 60.0
+    }
+  ],
+  "regua_meta": 75.0,
+  "filters_applied": {
+    "year": 2026,
+    "class_id": 1,
+    "student_id": null,
+    "theme_id": 2
+  }
+}
+
+Respostas Detalhadas - Fornece a lista das questões respondidas pelo aluno (por tema)
+- Endpoint: GET /reports/student-details
+- Postman: GET http://localhost:5000/reports/student-details?teacher_id=1&class_id=10&student_id=42
+- Retorno:
+{
+  "Banco de Dados": [
+    {
+      "date": "28/04/2026 14:30",
+      "question": "O que é uma Primary Key em um banco de dados relacional?",
+      "difficulty": "Média",
+      "answer_provided": "Um identificador exclusivo para cada registro.",
+      "correct_answer": "Um identificador exclusivo para cada registro.",
+      "is_correct": true
+    },
+    {
+      "date": "28/04/2026 14:35",
+      "question": "Qual comando é usado para apagar todos os dados de uma tabela sem excluir a sua estrutura?",
+      "difficulty": "Difícil",
+      "answer_provided": "DELETE FROM table",
+      "correct_answer": "TRUNCATE TABLE",
+      "is_correct": false
+    }
+  ],
+  "Lógica de Programação": [
+    {
+      "date": "28/04/2026 15:10",
+      "question": "Qual a saída do código 'print(2 + 2 * 3)' em Python?",
+      "difficulty": "Fácil",
+      "answer_provided": "8",
+      "correct_answer": "8",
+      "is_correct": true
+    }
+  ]
+}
+
+Notas de Implementação
+- Regra de Aluno: O sistema retornará erro 400 se student_id for enviado sem class_id. Isso garante a correta indexação e segurança dos dados.
+

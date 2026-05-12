@@ -57,7 +57,11 @@ def init_app(app):
     # ROTA PARA GRAFICO
     @app.route('/graphics')
     def graphics():
-        return render_template('graphic.html')
+        with urllib.request.urlopen('http://127.0.0.1:5000/students') as resp:
+            students = json.loads(resp.read().decode())
+        with urllib.request.urlopen('http://127.0.0.1:5000/classes') as resp:
+            classes = json.loads(resp.read().decode())
+        return render_template('graphic.html',students=students,classes=classes)
 
 
     # ROTAS PARA ALUNO
@@ -324,11 +328,93 @@ def init_app(app):
     # Delete   
     @app.route('/delQuest/<int:id>')
     def dquest(id):
-        api_url = f'http://localhost:5000/questions/{id}'
+        api_url = f'http://127.0.0.1:5000/questions/{id}'
 
         response = requests.delete(api_url)
 
         return redirect(url_for('quest'))
+
+
+    # Rotas para QuestionsSkill
+    # Get
+    @app.route('/questionSkill')
+    def qskill():
+        with urllib.request.urlopen('http://127.0.0.1:5000/questionsSkills') as resp:
+            qskills = json.loads(resp.read().decode())
+        return render_template('questSkill.html',qskills=qskills)
+    # Create
+    @app.route('/cadQskill', methods=['GET','POST'])
+    def cadQskill():
+        if request.method == 'POST':
+            idQuest = request.form.get('question')
+            idSkill = request.form.get('skill')
+            yearSerie = request.form.get('yearSerie')
+            difficulty = request.form.get('difficulty')
+            available = 'available' in request.form
+
+            qSkilldata = json.dumps({
+                'idQuestion': int(idQuest),
+                'idSkill': int(idSkill),
+                'idYearSerie': int(yearSerie),
+                'difficulty': int(difficulty),
+                'available': available
+            })
+            
+            req = urllib.request.Request(
+                url='http://127.0.0.1:5000/questionsSkills',
+                data=qSkilldata.encode('utf-8'),
+                headers={'Content-Type':'application/json'},
+                method='POST'
+            )
+
+            try:
+                with urllib.request.urlopen(req) as resp:
+                    if resp.status == 201:
+                        return redirect(url_for('qskill'))
+            except Exception as e:
+                print('Erro ao Cadastrar Habilidade Questão:', e)
+
+        with urllib.request.urlopen('http://127.0.0.1:5000//questions') as resp:
+            questions = json.loads(resp.read().decode())
+        with urllib.request.urlopen('http://127.0.0.1:5000/skills') as resp:
+            skills = json.loads(resp.read().decode())
+        with urllib.request.urlopen('http://127.0.0.1:5000/yearsSeries') as resp:
+            yearsSeries = json.loads(resp.read().decode())
+        return render_template('cadQuestSkill.html',questions=questions,skills=skills,yearsSeries=yearsSeries)
+    # Get - ID
+    @app.route('/editQskill/<int:id>')
+    def editQskill(id):
+        with urllib.request.urlopen(f'http://127.0.0.1:5000/questionsSkills/{id}') as resp:
+            qskill = json.loads(resp.read().decode())
+        with urllib.request.urlopen('http://127.0.0.1:5000//questions') as resp:
+            questions = json.loads(resp.read().decode())
+        with urllib.request.urlopen('http://127.0.0.1:5000/skills') as resp:
+            skills = json.loads(resp.read().decode())
+        with urllib.request.urlopen('http://127.0.0.1:5000/yearsSeries') as resp:
+            yearsSeries = json.loads(resp.read().decode())
+        return render_template('editQuestSkill.html',qskill=qskill,questions=questions,skills=skills,yearsSeries=yearsSeries)
+    
+    # Update
+    @app.route('/updateqSkill/<int:id>', methods=['POST'])
+    def updateQskill(id):
+        data = {
+            'idQuestion': request.form.get('question',type=int),
+            'idSkill': request.form.get('skill',type=int),
+            'idYearSerie': request.form.get('yearSerie',type=int),
+            'difficulty': request.form.get('difficulty',type=int),
+            'available': 'available' in request.form
+        }
+        requests.put(f'http://127.0.0.1:5000/questionsSkills/{id}', json=data)
+        return redirect(url_for('qskill'))
+    # Delete
+    @app.route('/delqSkill/<int:id>')
+    def dQskill(id):
+        api_url=f'http://127.0.0.1:5000/questionsSkills/{id}'
+
+        response = requests.delete(api_url)
+
+        return redirect(url_for('qskill'))
+
 
 
     # Rotas para login/logout
