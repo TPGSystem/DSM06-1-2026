@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-5 min-vh-100">
+    <div class="row">
+        <table class="table table-hover table-striped-columns">
+            <thead>
+                <tr>
+                  <th scope="col">Ano</th>
+                  <th scope="col">Serie</th>
+                  <th scope="col">Descrição</th>
+                  <th scope="col">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for ys in yearSeries %}
+                <tr>
+                  <td hidden>{{ys.id}}</td>
+                  <th scope="row">{{ys.year}}</th>
+                  <th>{{ys.serie}}</th>
+                  <th>{{ys.descryption}}</th>
+                  <td colspan="2">
+                    <a href="{{url_for('editYearSerie', id=ys.id)}}" class="btn" style="background-color: #5491C7;"><img src="../static/imgs/Vector(3).png" alt="Editar" style="width: 22px; height: 20px;"></a>
+                    <a href="{{url_for('dYearSerie', id=ys.id)}}" class="btn" style="background-color: #FE4D4D;"><img src="../static/imgs/Vector(4).png" alt="Deletar" style="width: 22px; height: 20px;"></a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock content %}

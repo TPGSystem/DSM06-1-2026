@@ -393,7 +393,6 @@ def init_app(app):
         with urllib.request.urlopen('http://127.0.0.1:5000/yearsSeries') as resp:
             yearsSeries = json.loads(resp.read().decode())
         return render_template('editQuestSkill.html',qskill=qskill,questions=questions,skills=skills,yearsSeries=yearsSeries)
-    
     # Update
     @app.route('/updateqSkill/<int:id>', methods=['POST'])
     def updateQskill(id):
@@ -414,6 +413,200 @@ def init_app(app):
         response = requests.delete(api_url)
 
         return redirect(url_for('qskill'))
+
+
+    # Rotas para Skill
+    # Get
+    @app.route('/skill')
+    def skill():
+        with urllib.request.urlopen('http://127.0.0.1:5000/skills') as resp:
+            skills = json.loads(resp.read().decode())
+        return render_template('skill.html',skills=skills)
+    # Create
+    @app.route('/cadSkill', methods=['GET','POST'])
+    def cadSkill():
+        if request.method == 'POST':
+            idComponent = request.form.get('component')
+            skill = request.form.get('skill')
+            comment = request.form.get('comment')
+            skillCodeCP = request.form.get('codeCP')
+            skillCodeBNCC = request.form.get('codeBNCC')
+
+            skil_data = json.dumps ({
+                'idComponent': int(idComponent),
+                'skill': skill,
+                'comment': comment,
+                'skillCodeCP': skillCodeCP,
+                'skillCodeBNCC': skillCodeBNCC
+            })
+
+
+            req = urllib.request.Request(
+                url='http://127.0.0.1:5000/skills',
+                data=skil_data.encode('utf-8'),
+                headers={'Content-Type':'application/json'},
+                method='POST'
+            )
+
+            try:
+                with urllib.request.urlopen(req) as resp:
+                    if resp.status == 201:
+                        return redirect(url_for('skill'))
+            except Exception as e:
+                print('Erro ao cadastrar Habilidade:', e)
+
+        with urllib.request.urlopen('http://127.0.0.1:5000/components') as resp:
+            components = json.loads(resp.read().decode())
+        return render_template('cadSkill.html',components=components)
+    # Get - ID
+    @app.route('/editSkill/<int:id>')
+    def editSkill(id):
+        with urllib.request.urlopen(f'http://127.0.0.1:5000/skills/{id}') as resp:
+            skill = json.loads(resp.read().decode())
+        with urllib.request.urlopen('http://127.0.0.1:5000/components') as resp:
+            components = json.loads(resp.read().decode())
+        return render_template('editSkill.html',skill=skill,components=components)
+    # Update    
+    @app.route('/updateSkill/<int:id>', methods=['POST'])
+    def updateSkill(id):
+        data = {
+            'idComponent': request.form.get('component'),
+            'comment': request.form.get('comment'),
+            'skillCodeCP': request.form.get('codeCP'),
+            'skillCodeBNCC': request.form.get('codeBNCC')
+        }
+
+        requests.put(f'http://127.0.0.1:5000/skills/{id}', json=data)
+
+        return redirect(url_for('skill'))
+    # Delete
+    @app.route('/delSkill/<int:id>')
+    def dSkill(id):
+        api_url = f'http://127.0.0.1:5000/skills/{id}'
+
+        response = requests.delete(api_url)
+
+        return redirect(url_for('skill'))
+
+
+    # Rotas para Temas
+    # Get
+    @app.route('/theme')
+    def theme():
+        with urllib.request.urlopen('http://127.0.0.1:5000/themes') as resp:
+            themes = json.loads(resp.read().decode())
+        return render_template('themes.html',themes=themes)
+    # Create
+    @app.route('/cadTheme', methods=['GET','POST'])
+    def cadTheme():
+        if request.method == 'POST':
+            descryption = request.form.get('descryption')
+
+            theme_data = json.dumps({
+                'descryption': descryption
+            })
+
+            req = urllib.request.Request(
+                url='http://127.0.0.1:5000/themes',
+                data = theme_data.encode('utf-8'),
+                headers= {'Content-Type':'application/json'},
+                method='POST'
+            )
+
+            try:
+                with urllib.request.urlopen(req) as resp:
+                    if resp.status == 201:
+                        return redirect(url_for('theme'))
+            except Exception as e:
+                print('Erro ao cadastrar Tema:', e)
+        return render_template('cadTheme.html')
+    # Get - ID
+    @app.route('/editTheme/<int:id>')
+    def editTheme(id):
+        with urllib.request.urlopen(f'http://127.0.0.1:5000/themes/{id}') as resp:
+            theme = json.loads(resp.read().decode())
+        return render_template('editTheme.html',theme=theme)
+    # Update
+    @app.route('/updateTheme/<int:id>', methods=['POST'])
+    def updateTheme(id):
+        data = {
+            'descryption': request.form.get('descryption')
+        }
+
+        requests.put(f'http://127.0.0.1:5000/themes/{id}', json=data)
+
+        return redirect(url_for('theme'))
+    # Delete
+    @app.route('/delTheme/<int:id>')
+    def dTheme(id):
+        api_url = f'http://127.0.0.1:5000/themes/{id}'
+
+        response = requests.delete(api_url)
+
+        return redirect(url_for('theme'))
+
+
+    # Rotas para Ano/yearSerie
+    # Get
+    @app.route('/yearSerie')
+    def yearSerie():
+        with urllib.request.urlopen('http://127.0.0.1:5000/yearsSeries') as resp:
+            yearSeries = json.loads(resp.read().decode())
+        return render_template('yearSerie.html',yearSeries=yearSeries)
+    # Create
+    @app.route('/cadYearSerie', methods=['GET','POST'])
+    def cadYearSerie():
+        if request.method == 'POST':
+            year = request.form.get('year')
+            serie = request.form.get('serie')
+            descryption = request.form.get('descryption')
+
+            ys_data = json.dumps({
+                'year': year,
+                'serie': serie,
+                'descryption': descryption
+            })
+
+            req = urllib.request.Request(
+                url='http://127.0.0.1:5000/yearsSeries',
+                data=ys_data.encode('utf-8'),
+                headers={'Content-Type':'application/json'},
+                method='POST'
+            )
+
+            try:
+                with urllib.request.urlopen(req) as resp:
+                    if resp.status == 201:
+                        return redirect(url_for('yearSerie'))
+            except Exception as e:
+                print('Erro ao cadastrar Ano/Serie:', e)
+        return render_template('cadYearSerie.html')
+    # Get - ID
+    @app.route('/editYearSerie/<int:id>')
+    def editYearSerie(id):
+        with urllib.request.urlopen(f'http://127.0.0.1:5000/yearsSeries/{id}') as resp:
+            yearSerie = json.loads(resp.read().decode())
+        return render_template('editYearSerie.html', yearSerie=yearSerie)
+    # Update
+    @app.route('/updateYearSerie/<int:id>', methods=['POST'])
+    def updateYearSerie(id):
+        data = {
+            'year': request.form.get('year'),
+            'serie': request.form.get('serie'),
+            'descryption': request.form.get('descryption')
+        }
+
+        requests.put(f'http://127.0.0.1:5000/yearsSeries/{id}', json=data)
+
+        return redirect(url_for('yearSerie'))
+    # Delete
+    @app.route('/delYearSerie/<int:id>')
+    def dYearSerie(id):
+        api_url = f'http://127.0.0.1:5000/yearsSeries/{id}'
+
+        response = requests.delete(api_url)
+
+        return redirect(url_for('yearSerie'))
 
 
 

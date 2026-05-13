@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-5 min-vh-100">
+    <div class="row">
+        <table class="table table-hover table-striped-columns">
+            <thead>
+                <tr>
+                  <th scope="col">Descrição</th>
+                  <th scope="col">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for theme in themes %}
+                <tr>
+                  <td hidden>{{theme.id}}</td>
+                  <th scope="row">{{theme.descryption}}</th>
+                  <td colspan="2">
+                    <a href="{{url_for('editTheme', id=theme.id)}}" class="btn" style="background-color: #5491C7;"><img src="../static/imgs/Vector(3).png" alt="Editar" style="width: 22px; height: 20px;"></a>
+                    <a href="{{url_for('dTheme', id=theme.id)}}" class="btn" style="background-color: #FE4D4D;"><img src="../static/imgs/Vector(4).png" alt="Deletar" style="width: 22px; height: 20px;"></a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock content %}
