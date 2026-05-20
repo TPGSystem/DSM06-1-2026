@@ -50,12 +50,12 @@
         .hero h1 { font-size: 2.8rem; margin-bottom: 1.5rem; }
         .hero p { font-size: 1.2rem; max-width: 900px; margin: auto; }
 
-        section { padding: 4rem 5%; max-width: 1200px; margin: auto; }
+        section { padding: 1rem 5%; max-width: 1200px; margin: auto; }
 
         .content-box {
             background: #fff;
-            padding: 3rem;
-            border-radius: 20px;
+            padding: 1rem;
+            border-radius: 29px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.05);
             margin-bottom: 2rem;
             text-align: center;
@@ -125,6 +125,54 @@
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
+.flip-card-front2, .flip-card-back2 {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.flip-card-front3, .flip-card-back3 {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.flip-card-front4, .flip-card-back4 {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
 .flip-card-front {
     background-color: white;
     border-left: 5px solid var(--tpg-blue);
@@ -135,6 +183,40 @@
     color: white;
     transform: rotateY(180deg);
 }
+
+.flip-card-front2 {
+    background-color: white;
+    border-left: 5px solid var(--tpg-yellow);
+}
+
+.flip-card-back2 {
+    background-color: var(--tpg-yellow);
+    color: white;
+    transform: rotateY(180deg);
+}
+
+.flip-card-front3 {
+    background-color: white;
+    border-left: 5px solid var(--tpg-red);
+}
+
+.flip-card-back3 {
+    background-color: var(--tpg-red);
+    color: white;
+    transform: rotateY(180deg);
+}
+
+.flip-card-front4 {
+    background-color: white;
+    border-left: 5px solid var(--primary-teal);
+}
+
+.flip-card-back4 {
+    background-color: var(--primary-teal);
+    color: white;
+    transform: rotateY(180deg);
+}
+
 
 .member-photo {
     width: 100%;
@@ -254,12 +336,12 @@
                 <!-- Pedro -->
                 <div class="flip-card">
                     <div class="flip-card-inner">
-                        <div class="flip-card-front">
+                        <div class="flip-card-front2">
                             <h3>Pedro Xavier da Veiga</h3>
                             <p>Front-End & Integração</p>
-                            <small style="color: var(--tpg-blue);">Passe o mouse para ver a foto</small>
+                            <small style="color: var(--tpg-yellow);">Passe o mouse para ver a foto</small>
                         </div>
-                        <div class="flip-card-back">
+                        <div class="flip-card-back2">
                             <img src="imagens/foto_pedro.PNG" alt="Pedro Veiga" class="member-photo">
                         </div>
                     </div>
@@ -268,12 +350,12 @@
                 <!-- Raphael -->
                 <div class="flip-card">
                     <div class="flip-card-inner">
-                        <div class="flip-card-front">
+                        <div class="flip-card-front3">
                             <h3>Raphael Pedretti da Silva</h3>
                             <p>UI/UX & Game Design</p>
-                            <small style="color: var(--tpg-blue);">Passe o mouse para ver a foto</small>
+                            <small style="color: var(--tpg-red);">Passe o mouse para ver a foto</small>
                         </div>
-                        <div class="flip-card-back">
+                        <div class="flip-card-back3">
                             <img src="imagens/foto_raphael.PNG" alt="Raphael Pedretti" class="member-photo">
                         </div>
                     </div>
@@ -282,12 +364,12 @@
                 <!-- Renato -->
                 <div class="flip-card">
                     <div class="flip-card-inner">
-                        <div class="flip-card-front">
+                        <div class="flip-card-front4">
                             <h3>Renato José Valente</h3>
                             <p>Front-End & Documentação</p>
-                            <small style="color: var(--tpg-blue);">Passe o mouse para ver a foto</small>
+                            <small style="color: var(--primary-teal);">Passe o mouse para ver a foto</small>
                         </div>
-                        <div class="flip-card-back">
+                        <div class="flip-card-back4">
                             <img src="imagens/foto_renato.PNG" alt="Renato Valente" class="member-photo">
                         </div>
                     </div>
