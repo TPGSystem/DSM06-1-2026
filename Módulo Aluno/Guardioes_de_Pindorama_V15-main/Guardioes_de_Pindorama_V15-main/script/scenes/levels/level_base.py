@@ -379,9 +379,6 @@ class Level(Scene):
         if self.overlay:
             self.overlay.draw(screen)
 
-        # Atualiza a tela
-        pygame.display.update()
-
     def handle_level_exit(self, next_scene_cls=None):
         """
         Trata a saída do level.

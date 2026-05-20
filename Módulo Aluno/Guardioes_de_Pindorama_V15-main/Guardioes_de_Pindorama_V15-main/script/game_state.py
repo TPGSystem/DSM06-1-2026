@@ -68,6 +68,31 @@ class GameState:
     # Nome/ID do personagem escolhido na seleção (None se ainda não escolheu)
     selected_character: str | None = None
 
+    # Dados do aluno autenticado
+    student_id: int | None = None
+    student_name: str | None = None
+    student_ra: str | None = None
+
+    # Dados da turma
+    class_id: int | None = None
+    class_name: str | None = None
+    teacher_name: str | None = None
+    school_year: int | None = None
+
+    # Dados da partida criada pela API
+    id_game: int | None = None
+    id_match: int | None = None
+    id_step: int | None = None
+    gold: int = 0
+
+    # Status do personagem
+    score_strength: int = 0
+    score_agility: int = 0
+    score_resistance: int = 0
+    score_wisdom: int = 0
+
+
+
     # Áreas concluídas pelo jogador (set evita duplicatas e facilita consulta)
     completed_areas: set[str] = field(default_factory=set)
 
@@ -91,10 +116,30 @@ class GameState:
           - Limpa áreas concluídas, inventário e flags
           - Não apaga o arquivo de save; apenas o estado em memória
         """
+        self.student_id = None
+        self.student_name = None
+        self.student_ra = None
+
+        self.class_id = None
+        self.class_name = None
+        self.teacher_name = None
+        self.school_year = None
+
+        self.id_game = None
+        self.id_match = None
+        self.id_step = None
+        self.gold = 0
+
+        self.score_strength = 0
+        self.score_agility = 0
+        self.score_resistance = 0
+        self.score_wisdom = 0
+        
         self.selected_character = None
         self.completed_areas.clear()
         self.inventory.clear()
         self.flags.clear()
+
 
     # -------------------------
     # Áreas (fases)
@@ -164,8 +209,29 @@ class GameState:
         Converte o estado atual para um dicionário pronto para salvar em JSON.
         Inclui 'version' para permitir migração de dados no futuro.
         """
+                
         return {
             "version": STATE_VERSION,
+
+            "student_id": self.student_id,
+            "student_name": self.student_name,
+            "student_ra": self.student_ra,
+
+            "class_id": self.class_id,
+            "class_name": self.class_name,
+            "teacher_name": self.teacher_name,
+            "school_year": self.school_year, 
+
+            "id_game": self.id_game,
+            "id_match": self.id_match,
+            "id_step": self.id_step,
+            "gold": self.gold,
+
+            "score_strength": self.score_strength,
+            "score_agility": self.score_agility,
+            "score_resistance": self.score_resistance,
+            "score_wisdom": self.score_wisdom,
+
             "selected_character": self.selected_character,
             "completed_areas": sorted(self.completed_areas),  # ordena só p/ ficar legível
             "inventory": dict(self.inventory),
@@ -194,6 +260,25 @@ class GameState:
         inventory = {str(k): int(v) for k, v in inventory.items()}
         flags = {str(k): bool(v) for k, v in flags.items()}
 
+        student_id = data.get("student_id")
+        student_name = data.get("student_name")
+        student_ra = data.get("student_ra")
+
+        class_id = data.get("class_id")
+        class_name = data.get("class_name")
+        teacher_name = data.get("teacher_name")
+        school_year = data.get("school_year")
+
+        id_game = data.get("id_game")
+        id_match = data.get("id_match")
+        id_step = data.get("id_step")
+        gold = data.get("gold", 0)
+
+        score_strength = data.get("score_strength", 0)
+        score_agility = data.get("score_agility", 0)
+        score_resistance = data.get("score_resistance", 0)
+        score_wisdom = data.get("score_wisdom", 0)
+
         return cls(
             selected_character=(
                 selected_character if (selected_character is None or isinstance(selected_character, str))
@@ -202,6 +287,25 @@ class GameState:
             completed_areas=completed_areas,
             inventory=inventory,
             flags=flags,
+
+            student_id=student_id,
+            student_name=student_name,
+            student_ra=student_ra,
+
+            class_id=class_id,
+            class_name=class_name,
+            teacher_name=teacher_name,
+            school_year=school_year,
+
+            id_game=id_game,
+            id_match=id_match,
+            id_step=id_step,
+            gold=gold,
+
+            score_strength=score_strength,
+            score_agility=score_agility,
+            score_resistance=score_resistance,
+            score_wisdom=score_wisdom,
         )
 
     # -------------------------
@@ -241,6 +345,26 @@ class GameState:
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
             loaded = self.from_dict(data)
+
+            self.student_id = loaded.student_id
+            self.student_name = loaded.student_name
+            self.student_ra = loaded.student_ra
+
+            self.class_id = loaded.class_id
+            self.class_name = loaded.class_name
+            self.teacher_name = loaded.teacher_name
+            self.school_year = loaded.school_year
+
+            self.id_game = loaded.id_game
+            self.id_match = loaded.id_match
+            self.id_step = loaded.id_step
+            self.gold = loaded.gold
+
+            self.score_strength = loaded.score_strength
+            self.score_agility = loaded.score_agility
+            self.score_resistance = loaded.score_resistance
+            self.score_wisdom = loaded.score_wisdom
+
             # Copia campos (mantém o mesmo objeto STATE referenciado pelo projeto)
             self.selected_character = loaded.selected_character
             self.completed_areas = loaded.completed_areas

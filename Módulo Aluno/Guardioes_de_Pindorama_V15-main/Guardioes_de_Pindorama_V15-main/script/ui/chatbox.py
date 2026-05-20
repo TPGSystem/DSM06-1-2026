@@ -476,16 +476,25 @@ class ChatBox:
                             break
 
                         if i == self.option_index:
-                            draw_text_shadow(
-                                screen,
-                                self.small_font,
-                                line,
-                                (x, y),
-                                text_color=GOLD,
-                                shadow_color=BLACK_COLOR,
-                                offset=(2, 2),
-                                alpha=140
+                            text_width = self.small_font.size(line)[0]
+
+                            selector_rect = pygame.Rect(
+                                x - 10,
+                                y - 2,
+                                text_width + 20,
+                                26
                             )
+
+                            pygame.draw.rect(
+                                screen,
+                                GOLD,
+                                selector_rect,
+                                border_radius=4
+                            )
+
+                            surf = self.small_font.render(line, True, BLACK_COLOR)
+                            screen.blit(surf, (x, y))
+
                         else:
                             surf = self.small_font.render(line, True, BLACK_COLOR)
                             screen.blit(surf, (x, y))
@@ -509,16 +518,25 @@ class ChatBox:
                             break
 
                         if i == self.option_index:
-                            draw_text_shadow(
-                                screen,
-                                self.small_font,
-                                line,
-                                (x, y),
-                                text_color=GOLD,
-                                shadow_color=BLACK_COLOR,
-                                offset=(2, 2),
-                                alpha=140
+                            text_width = self.small_font.size(line)[0]
+
+                            selector_rect = pygame.Rect(
+                                x - 10,
+                                y - 2,
+                                text_width + 20,
+                                26
                             )
+
+                            pygame.draw.rect(
+                                screen,
+                                GOLD,
+                                selector_rect,
+                                border_radius=4
+                            )
+
+                            surf = self.small_font.render(line, True, BLACK_COLOR)
+                            screen.blit(surf, (x, y))
+
                         else:
                             surf = self.small_font.render(line, True, BLACK_COLOR)
                             screen.blit(surf, (x, y))

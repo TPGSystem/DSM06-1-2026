@@ -164,6 +164,12 @@ class Boss_Mapinguari(Obj):
         self.death_duration = 180   # aproximadamente 3 segundos a 60 FPS
         self.death_timer = 0
         self.death_finished = False
+        
+        # Guarda a direção exata no momento da morte
+        self.death_facing_right = False
+        
+        # Guarda a última direção visual realmente exibida na tela
+        self.last_visual_facing_right = False
 
     # =========================================================
     # ETAPA 11 - CARREGAMENTO DE ANIMAÇÕES
@@ -498,14 +504,28 @@ class Boss_Mapinguari(Obj):
     def die(self):
         """
         Entra no estado de morte.
+
+        Se o Mapinguari estiver virado para a esquerda,
+        usa a sprite de morte normal.
+
+        Se estiver virado para a direita,
+        usa a sprite de morte espelhada.
         """
         self.dead = True
         self.state = "dying"
 
-        self.image = self.death_image.copy()
-        self.image.set_alpha(self.death_alpha)
-
         old_midbottom = self.rect.midbottom
+
+        death_sprite = self.death_image.copy()
+
+        # Esquerda = sprite normal
+        # Direita = sprite espelhada
+        if self.facing_right:
+            death_sprite = pygame.transform.flip(death_sprite, True, False)
+
+        death_sprite.set_alpha(self.death_alpha)
+
+        self.image = death_sprite
         self.rect = self.image.get_rect()
         self.rect.midbottom = old_midbottom
 
@@ -531,7 +551,8 @@ class Boss_Mapinguari(Obj):
 
     def _update_death(self):
         """
-        Atualiza o fade da morte.
+        Atualiza apenas o fade da morte.
+        A direção da sprite já foi definida no método die().
         """
         if self.death_finished:
             return
@@ -540,6 +561,7 @@ class Boss_Mapinguari(Obj):
 
         step = int(255 / max(1, self.death_duration))
         self.death_alpha = max(0, self.death_alpha - step)
+
         self.image.set_alpha(self.death_alpha)
 
         if self.death_timer >= self.death_duration:
@@ -577,6 +599,9 @@ class Boss_Mapinguari(Obj):
             # Por isso, só espelhamos quando ele precisa olhar para a direita.
             if self.facing_right:
                 self.image = pygame.transform.flip(self.image, True, False)
+                self.last_visual_facing_right = True
+            else:
+                self.last_visual_facing_right = False
 
             self.rect = self.image.get_rect()
             self.rect.midbottom = old_midbottom

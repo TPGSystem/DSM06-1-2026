@@ -1,0 +1,5 @@
+flask
+pytest
+black
+flake8
+selenium

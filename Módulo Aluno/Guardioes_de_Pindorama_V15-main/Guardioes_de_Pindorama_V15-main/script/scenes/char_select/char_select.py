@@ -3,6 +3,8 @@ from ..base import Scene
 from script.core.obj import Obj
 from script.setting import *
 from ..map.map_scene import Map
+from script.services.api_client import select_character
+from script.game_state import STATE
 
 
 class Char_Select(Scene):
@@ -239,12 +241,36 @@ class Char_Select(Scene):
         if event.type == pygame.KEYDOWN:
             # Verifica se a tecla Enter foi pressionada
             if event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
-                # Salvar o personagem selecionado
-                self.option_data["selected_character"] = self.cursor_choose
-                self.save_file("teste.json", self.option_data)  # Salva os dados
-                
-                if self.cursor_choose == 0:  # Se o primeiro personagem for selecionado
-                    self.change_scene(Map())  # Muda para a cena do mapa
+
+                # Salva no GameState
+                STATE.selected_character = self.cursor_choose
+
+                # Envia para API
+                result = select_character(
+                    STATE.student_id,
+                    STATE.class_id,
+                    self.cursor_choose + 1
+                )
+
+                print("PERSONAGEM SELECIONADO!")
+                print(result)
+
+                if result:
+
+                    STATE.id_game = result["idGame"]
+                    STATE.id_match = result["idMatch"]
+                    STATE.gold = result["gold"]
+
+                    STATE.score_strength = result["scores"]["strength"]
+                    STATE.score_agility = result["scores"]["agility"]
+                    STATE.score_resistance = result["scores"]["resistance"]
+                    STATE.score_wisdom = result["scores"]["wisdom"]
+
+                    # Salva estado local
+                    STATE.save()
+
+                # Vai para o mapa
+                self.change_scene(Map())
 
             # Movimento do cursor para baixo
             if event.key == pygame.K_DOWN or event.key == pygame.K_s:
@@ -305,4 +331,4 @@ class Char_Select(Scene):
         if pose_path and pose_pos and pose_size:
             Obj(pose_path, pose_pos, [self.all_sprites], size=pose_size).draw(screen)
 
-        pygame.display.update()
+        

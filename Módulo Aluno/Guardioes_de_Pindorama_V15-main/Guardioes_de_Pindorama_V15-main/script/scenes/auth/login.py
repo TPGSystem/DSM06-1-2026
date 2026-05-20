@@ -3,6 +3,8 @@ from ..base import Scene
 from script.core.obj import Obj
 from script.setting import *
 from ..menus.title import Title
+from script.services.api_client import login
+from script.game_state import STATE
 
 
 # Criando Tela de Login de Usuário
@@ -18,9 +20,9 @@ class Login(Scene):
         self.login_button = Obj("assets/login/Button.png", [541, 460], [self.all_sprites])  # Botão de Login
                 
         # Configuração de fontes
-        self.title_font = pygame.font.Font(None, 36)  # Fonte para o título da tela
-        self.label_font = pygame.font.Font(None, 24)  # Fonte para as labels de texto
-        self.font = pygame.font.Font(None, 24)  # Fonte para campos de entrada
+        self.title_font = pygame.font.Font(None, 40)  # Fonte para o título da tela
+        self.label_font = pygame.font.Font(None, 30)  # Fonte para as labels de texto
+        self.font = pygame.font.Font(None, 30)  # Fonte para campos de entrada
                 
         # Campos de entrada
         self.RA_rect = pygame.Rect(470, 235, 340, 40)  # Campo de RA
@@ -30,86 +32,126 @@ class Login(Scene):
         self.active_field = "RA"  # Inicia com o campo RA como ativo
         self.RA_text = ""
         self.password_text = ""
+        self.message = ""
         
         # Cores para campos de entrada
         self.color_active = pygame.Color('dodgerblue')
         self.color_inactive = pygame.Color('gray')
         
-        # Dados de login simulados (pode ser integrado com um banco de dados)
-        #self.correct_login = "RA123456"
-        #self.correct_password = "123"
+        self.cursor_visible = True
+        self.cursor_timer = 0
+        self.cursor_interval = 30
     
     def validate_login(self):
         """Valida se o RA e Senha correspondem aos dados cadastrados."""
         return self.RA_text == self.correct_login and self.password_text == self.correct_password
     
+    def try_login(self):
+        result = login(self.RA_text.strip(), self.password_text.strip())
+
+        if result and result.get("authenticated"):
+            print("LOGIN REALIZADO!")
+            print(result)
+
+            STATE.student_id = result["student"]["id"]
+            STATE.student_name = result["student"]["name"]
+            STATE.student_ra = result["student"]["ra"]
+
+            STATE.class_id = result["class"]["id"]
+            STATE.class_name = result["class"]["dsYearSerie"]
+            STATE.teacher_name = result["class"]["dsTeacher"]
+            STATE.school_year = result["class"]["schoolYear"]
+
+            STATE.save()
+            self.change_scene(Title())
+
+        else:
+            self.message = "RA ou senha incorretos"
+
     def handle_events(self, event):
         """Gerencia eventos de entrada do usuário."""
+
+        # ---------------------------------------------------------
+        # EVENTOS DE TECLADO
+        # ---------------------------------------------------------
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
-                # Apenas redireciona para a próxima tela ao pressionar Enter
-                self.change_scene(Title())  # Redireciona para a próxima tela (Título)
-        
-        
-        #Código Desativado para acesso sem Login e Senha
-        #if event.type == pygame.KEYDOWN:
-            #if event.key == pygame.K_TAB:  # Quando TAB é pressionado, alterna o campo
-                #if self.active_field == "RA":
-                    #self.active_field = "Senha"  # Muda para o campo de Senha
-                #elif self.active_field == "Senha":
-                    #self.active_field = "Login"  # Muda para o botão de login
-                #elif self.active_field == "Login":
-                    #self.active_field = "RA"  # Muda de volta para o campo RA
-            #elif self.active_field == "RA":
-                #if event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:  # Salta para o campo de senha
-                    #self.active_field = "Senha"
-                #elif event.key == pygame.K_BACKSPACE:
-                    #self.RA_text = self.RA_text[:-1]
-                #else:
-                    #self.RA_text += event.unicode
-            #elif self.active_field == "Senha":
-                #if event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER: # Verifica o login ao pressionar Enter
-                    #if self.validate_login():
-                        #self.change_scene(Title())  # Redireciona para a tela de título
-                    #else:
-                        #print("RA ou Senha Incorretos!")  # Mensagem de erro
-                #elif event.key == pygame.K_BACKSPACE:
-                    #self.password_text = self.password_text[:-1]
-                #else:
-                    #self.password_text += event.unicode
-            #elif self.active_field == "Login":  # Se o foco estiver no botão de login
-                #if event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:  # Verifica o login ao pressionar Enter
-                    #if self.validate_login():
-                        #self.change_scene(Title())  # Redireciona para a tela de título
-                    #else:
-                        #print("RA ou Senha Incorretos!")  # Mensagem de erro
-        
+
+            # TAB alterna:
+            # RA -> Senha -> Login -> RA
+            if event.key == pygame.K_TAB:
+
+                if self.active_field == "RA":
+                    self.active_field = "Senha"
+
+                elif self.active_field == "Senha":
+                    self.active_field = "Login"
+
+                elif self.active_field == "Login":
+                    self.active_field = "RA"
+
+                return
+
+            # -----------------------------------------------------
+            # CAMPO RA
+            # -----------------------------------------------------
+            elif self.active_field == "RA":
+
+                if event.key == pygame.K_BACKSPACE:
+                    self.RA_text = self.RA_text[:-1]
+
+                elif event.key == pygame.K_RETURN:
+                    self.active_field = "Senha"
+
+                elif event.unicode and event.unicode.isprintable():
+                    self.RA_text += event.unicode
+
+                return
+
+            # -----------------------------------------------------
+            # CAMPO SENHA
+            # -----------------------------------------------------
+            elif self.active_field == "Senha":
+
+                if event.key == pygame.K_BACKSPACE:
+                    self.password_text = self.password_text[:-1]
+
+                elif event.key == pygame.K_RETURN:
+                    self.try_login()
+
+                elif event.unicode and event.unicode.isprintable():
+                    self.password_text += event.unicode
+
+                return
+
+            # -----------------------------------------------------
+            # BOTÃO LOGIN
+            # -----------------------------------------------------
+            elif self.active_field == "Login":
+
+                if event.key == pygame.K_RETURN:
+                    self.try_login()
+
+                return
+
+        # ---------------------------------------------------------
+        # EVENTOS DE MOUSE
+        # ---------------------------------------------------------
         elif event.type == pygame.MOUSEBUTTONDOWN:
-        # Opcional: se você quiser permitir o clique no botão para avançar
-            if self.login_button.rect.collidepoint(event.pos):
-                self.change_scene(Title())  # Redireciona para a próxima tela (Título)
-            
-        
-        #Código Desativado para acesso sem Login e Senha
-        #elif event.type == pygame.MOUSEBUTTONDOWN:
-            # Verifica se o clique foi em algum dos campos de texto
-            #if self.RA_rect.collidepoint(event.pos):
-                #self.active_field = "RA"
-            #elif self.password_rect.collidepoint(event.pos):
-                #self.active_field = "Senha"
-            #elif self.login_button_rect.collidepoint(event.pos):
-                #self.active_field = "Login"
-            #else:
-                #self.active_field = None
-            
-            # Verifica clique no botão de login
-            #if self.login_button.rect.collidepoint(event.pos):
-                #if self.validate_login():
-                    #self.change_scene(Title())  # Redireciona para a tela de título
-                #else:
-                    #print("RA ou Senha Incorretos!")  # Mensagem de erro
-        
-        return super().handle_events(event)
+
+            if self.RA_rect.collidepoint(event.pos):
+                self.active_field = "RA"
+                return
+
+            elif self.password_rect.collidepoint(event.pos):
+                self.active_field = "Senha"
+                return
+
+            elif self.login_button.rect.collidepoint(event.pos):
+                self.active_field = "Login"
+                self.try_login()
+                return
+
+        return
     
     def draw(self, surface):
         """Renderiza a tela de login."""
@@ -143,8 +185,57 @@ class Login(Scene):
         RA_surface = self.font.render(self.RA_text, True, pygame.Color(BLACK_COLOR))
         password_surface = self.font.render("*" * len(self.password_text), True, pygame.Color(BLACK_COLOR))  # Oculta senha com asteriscos
 
-        surface.blit(RA_surface, (self.RA_rect.x + 5, self.RA_rect.y + 5))
-        surface.blit(password_surface, (self.password_rect.x + 5, self.password_rect.y + 5))
+        # Centraliza verticalmente o texto dentro dos campos
+        RA_text_rect = RA_surface.get_rect(
+            midleft=(self.RA_rect.x + 8, self.RA_rect.centery)
+        )
+
+        password_text_rect = password_surface.get_rect(
+            midleft=(self.password_rect.x + 8, self.password_rect.centery)
+        )
+
+        surface.blit(RA_surface, RA_text_rect)
+        surface.blit(password_surface, password_text_rect)
+
+        # ---------------------------------------------------------
+        # Cursor piscando no campo selecionado
+        # ---------------------------------------------------------
+        if self.cursor_visible:
+
+            if self.active_field == "RA":
+                cursor_x = RA_text_rect.right + 3
+                cursor_y = RA_text_rect.y
+                cursor_h = RA_text_rect.height
+
+                pygame.draw.line(
+                    surface,
+                    pygame.Color(BLACK_COLOR),
+                    (cursor_x, cursor_y),
+                    (cursor_x, cursor_y + cursor_h),
+                    2
+                )
+
+            elif self.active_field == "Senha":
+                cursor_x = password_text_rect.right + 3
+                cursor_y = password_text_rect.y
+                cursor_h = password_text_rect.height
+
+                pygame.draw.line(
+                    surface,
+                    pygame.Color(BLACK_COLOR),
+                    (cursor_x, cursor_y),
+                    (cursor_x, cursor_y + cursor_h),
+                    2
+                )
+
+        if self.message:
+            msg_surface = self.font.render(
+                self.message,
+                True,
+                pygame.Color("red")
+            )
+
+            surface.blit(msg_surface, (470, 420))
         
         # Destacar o botão de login quando estiver focado
         if self.active_field == "Login":
@@ -153,3 +244,8 @@ class Login(Scene):
     def update(self):
         """Atualiza a lógica da tela."""
         self.all_sprites.update()
+
+        self.cursor_timer += 1
+        if self.cursor_timer >= self.cursor_interval:
+            self.cursor_visible = not self.cursor_visible
+            self.cursor_timer = 0

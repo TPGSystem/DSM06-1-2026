@@ -22,6 +22,9 @@ from script.setting import *
 # Importa a tela de Game Over
 from ..gameover import GameOver
 
+from script.services.api_client import save_questions
+from script.game_state import STATE
+
 
 class Level_VC_1_1(Level):
     """
@@ -185,6 +188,9 @@ class Level_VC_1_1(Level):
         # Índice da pergunta atual
         self.current_question = 0
 
+        # Guarda as respostas dadas pelo jogador para enviar à API
+        self.answers_log = []
+
         # Estágio atual:
         # 0 = diálogo inicial
         # 1 = quiz
@@ -232,6 +238,15 @@ class Level_VC_1_1(Level):
                         if not self.chatbox.was_answer_submitted():
                             self.chatbox.submit_answer()
 
+                            current_question = self.questions[self.current_question]
+
+                            points = current_question.get("pontos", 0) if self.chatbox.was_answer_correct() else 0
+
+                            self.answers_log.append({
+                                "idQuestion": current_question.get("idQuestion", self.current_question + 1),
+                                "points": points
+                            })
+
                             # Se acertou, converte pontos em gold
                             if self.chatbox.was_answer_correct():
                                 points = current_question.get("pontos", 0)
@@ -264,6 +279,19 @@ class Level_VC_1_1(Level):
 
                             # Se acabou o quiz, inicia o diálogo final
                             else:
+
+                                result = save_questions(
+                                    STATE.id_match,
+                                    1,
+                                    self.answers_log
+                                )
+
+                                print("[API][save_questions] Resultado:", result)
+
+                                if result:
+                                    STATE.id_step = result["idStep"]
+                                    STATE.save()
+
                                 self.dialogue_stage = 2
                                 self.chatbox.options = []
                                 self.chatbox.title = ""
@@ -420,5 +448,4 @@ class Level_VC_1_1(Level):
         if self.overlay:
             self.overlay.draw(screen)
 
-        # Atualiza a tela
-        pygame.display.update()
+        

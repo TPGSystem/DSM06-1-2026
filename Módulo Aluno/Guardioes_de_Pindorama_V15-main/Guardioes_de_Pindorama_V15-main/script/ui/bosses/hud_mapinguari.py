@@ -18,7 +18,7 @@ class BossHudMapinguari(BossHudBase):
 
     DISPLAY_NAME = "Mapinguari"
     DEATH_PORTRAIT = os.path.join(
-        "assets", "charsSprite", "bosses", "Mapinguari_D.png"
+        "assets", "charsSprite", "bosses", "M_D.png"
     )
 
     def __init__(self, position=(0, 0), size=(1280, 720)):

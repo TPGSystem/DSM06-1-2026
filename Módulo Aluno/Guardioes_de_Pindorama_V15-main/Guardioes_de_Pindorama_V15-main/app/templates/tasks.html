@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- Título usado também nos testes E2E -->
+    <title>Gerenciador de Tarefas</title>
+</head>
+<body>
+    <h1>Gerenciador de Tarefas</h1>
+
+    <!-- Campo para digitar o título da tarefa -->
+    <input
+        type="text"
+        id="title"
+        placeholder="Digite uma tarefa"
+    >
+
+    <!-- Botão para cadastrar tarefa -->
+    <button id="submit">Cadastrar</button>
+
+    <!-- Lista onde as tarefas serão exibidas -->
+    <ul id="tasks"></ul>
+
+    <script>
+        // Função responsável por buscar as tarefas na API
+        async function loadTasks() {
+            const response = await fetch("/tasks");
+            const tasks = await response.json();
+
+            const list = document.getElementById("tasks");
+            list.innerHTML = "";
+
+            tasks.forEach(task => {
+                const li = document.createElement("li");
+
+                // Exibe o título da tarefa
+                li.innerText = task.title;
+
+                // Adiciona atributo para facilitar os testes E2E
+                li.setAttribute("data-testid", "task-item");
+
+                list.appendChild(li);
+            });
+        }
+
+        // Evento executado quando o botão for clicado
+        document.getElementById("submit").addEventListener("click", async () => {
+            const title = document.getElementById("title").value;
+
+            await fetch("/tasks", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ title })
+            });
+
+            // Limpa o campo após cadastrar
+            document.getElementById("title").value = "";
+
+            // Atualiza a lista na tela
+            loadTasks();
+        });
+
+        // Carrega as tarefas assim que a página abre
+        loadTasks();
+    </script>
+</body>
+</html>

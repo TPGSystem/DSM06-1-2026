@@ -136,7 +136,7 @@ class PauseInventoryOverlay:
         left_rect = pygame.Rect(
             panel_rect.left + padding,
             title_rect.bottom + 20,
-            int(panel_width * 0.55),
+            int(panel_width * 0.48),
             panel_rect.bottom - (title_rect.bottom + 20) - padding
         )
 

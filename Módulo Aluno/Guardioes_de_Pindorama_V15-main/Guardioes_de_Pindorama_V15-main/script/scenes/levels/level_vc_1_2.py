@@ -26,6 +26,8 @@ from ..gameover import GameOver
 # Importa o estado global do jogo
 from script.game_state import STATE
 
+from script.services.api_client import save_challenge
+
 
 class Level_VC_1_2(Level):
     """
@@ -422,9 +424,22 @@ class Level_VC_1_2(Level):
         self._boss_hud_use_death_portrait()
 
         if self.boss_corpse:
+            # Guarda a posição do boss antes de remover da tela
+            old_midbottom = self.boss.rect.midbottom
+
+            # Copia a imagem de morte
+            corpse_img = self.boss_corpse.copy()
+
+            # Se o boss estava virado para a direita,
+            # espelha a imagem de morte.
+            if getattr(self.boss, "facing_right", False):
+                corpse_img = pygame.transform.flip(corpse_img, True, False)
+
+            self.boss_corpse = corpse_img
             self.boss_corpse_rect = self.boss_corpse.get_rect()
-            self.boss_corpse_rect.midbottom = self.boss.rect.midbottom
+            self.boss_corpse_rect.midbottom = old_midbottom
             self.boss_corpse_rect.y += 40
+
             self._boss_corpse_timer = 0
             self.boss_corpse_alpha = 255
             self.boss_dying = True
@@ -433,6 +448,17 @@ class Level_VC_1_2(Level):
             self.boss.kill()
         except Exception:
             pass
+
+        # Salva desafio/boss concluído na API
+        if STATE.id_step:
+
+            result = save_challenge(
+                STATE.id_step,
+                100,   # pontos do boss
+                1      # número/desafio da fase
+            )
+
+            print("[API][save_challenge] Resultado:", result)
 
         print("[DEBUG] Boss derrotado! Saída liberada.")
 
@@ -544,4 +570,4 @@ class Level_VC_1_2(Level):
         
         
 
-        pygame.display.update()
+      

@@ -169,6 +169,19 @@ class Game:
             self.handle_quit()
             return
 
+        # Ignora eventos do sistema da janela ao arrastar/redimensionar
+        if event.type in (
+            pygame.WINDOWMOVED,
+            pygame.WINDOWRESIZED,
+            pygame.WINDOWSIZECHANGED,
+            pygame.WINDOWFOCUSLOST,
+            pygame.WINDOWFOCUSGAINED,
+            pygame.WINDOWENTER,
+            pygame.WINDOWLEAVE,
+            pygame.WINDOWEXPOSED,
+        ):
+            return    
+
         # Alterna fullscreen ao pressionar F11
         if event.type == pygame.KEYDOWN and event.key == pygame.K_F11:
             self.toggle_fullscreen()
@@ -261,12 +274,18 @@ class Game:
         # Obtém o tamanho atual da janela real
         current_width, current_height = self.display.get_size()
 
+        if current_width <= 0 or current_height <= 0:
+            return
+
         # Calcula a escala ideal sem deformar a imagem
         scale = min(current_width / BASE_WIDTH, current_height / BASE_HEIGHT)
 
+        if scale <= 0:
+            return
+
         # Novo tamanho proporcional da tela virtual
-        new_width = int(BASE_WIDTH * scale)
-        new_height = int(BASE_HEIGHT * scale)
+        new_width = max(1, int(BASE_WIDTH * scale))
+        new_height = max(1, int(BASE_HEIGHT * scale))
 
         # Calcula o deslocamento para centralizar
         offset_x = (current_width - new_width) // 2
