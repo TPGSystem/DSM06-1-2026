@@ -1,7 +1,7 @@
 from models.database import db, Students, Characters, Games, GamesMatches, Regions, GamesSteps, Questions, QuestionsSkills, GamesQuestions, GamesChallenges
 from sqlalchemy import func, desc
 from werkzeug.security import check_password_hash
-from datetime import datetime, timezone
+from datetime import datetime
 import random
 
 def get_student_login_data(ra, password):
@@ -79,22 +79,35 @@ def get_initial_questions():
     # Usamos o filtro 'in_' para garantir que pegamos exatamente esse intervalo
     registers = Questions.query.filter(Questions.id.in_([1, 2, 3, 4, 5])).all()
     
-    return [{
-        'id': rec.id,
-        'question': rec.question,
-        'idTheme': rec.idTheme,
-        'dsTheme': rec.theme.descryption if rec.theme else None,
-        'idQuestionType': rec.idQuestionType,
-        'dsQuestionType': rec.questionType.descryption if rec.questionType else None,
-        'responses': [
+    result = []
+
+    for rec in registers:
+        responses = [
             {'text': rec.response1, 'idValidation': rec.idValidation1},
             {'text': rec.response2, 'idValidation': rec.idValidation2},
             {'text': rec.response3, 'idValidation': rec.idValidation3},
             {'text': rec.response4, 'idValidation': rec.idValidation4}
         ]
-        # Se houver imagens (LargeBinary), o tratamento para Base64 
-        # pode ser adicionado aqui conforme a necessidade do front-end.
-    } for rec in registers]
+
+        correct_answer = None
+
+        for resp in responses:
+            if resp["idValidation"] == 3:
+                correct_answer = resp["text"]
+                break
+
+        result.append({
+            'id': rec.id,
+            'question': rec.question,
+            'idTheme': rec.idTheme,
+            'dsTheme': rec.theme.descryption if rec.theme else None,
+            'idQuestionType': rec.idQuestionType,
+            'dsQuestionType': rec.questionType.descryption if rec.questionType else None,
+            'responses': responses,
+            'correctAnswer': correct_answer
+        })
+
+    return result
     
 def get_smart_questions(id_student, id_class, id_region=None):
     error_ranking = db.session.query(
@@ -114,6 +127,7 @@ def get_smart_questions(id_student, id_class, id_region=None):
     answered_ids = [r[0] for r in db.session.query(GamesQuestions.idQuestion).join(GamesSteps).join(GamesMatches).join(Games).filter(Games.idStudent == id_student, Games.idClass == id_class).all()]
 
     final_questions = []
+
     def fetch_qs(theme_id, limit, exclude):
         query = QuestionsSkills.query.join(Questions).filter(QuestionsSkills.available == True, ~QuestionsSkills.idQuestion.in_(exclude))
         if theme_id: query = query.filter(Questions.idTheme == theme_id)
@@ -142,34 +156,56 @@ def get_smart_questions(id_student, id_class, id_region=None):
 
 def save_questions_progress(id_game_match, id_region, answers):
     try:
-        new_step = GamesSteps(idGameMatch=id_game_match, idRegion=id_region, dateTime=datetime.now(timezone.utc), completedQuestions=True, completedChallenges=False)
+        new_step = GamesSteps(idGameMatch=id_game_match, idRegion=id_region, dateTime=datetime.now(), completedQuestions=True, completedChallenges=False)
         db.session.add(new_step)
         db.session.flush()
         pts_total = 0
         for a in answers:
-            db.session.add(GamesQuestions(idGamesSteps=new_step.id, idQuestion=a['idQuestion'], dateTime=datetime.now(timezone.utc), points=a['points']))
+            db.session.add(GamesQuestions(idGamesSteps=new_step.id, idQuestion=a['idQuestion'], dateTime=datetime.now(), points=a['points']))
             pts_total += a['points']
         match = db.session.get(GamesMatches, id_game_match)
         if match: match.scorePoints += pts_total
+
+        game = db.session.get(Games, match.idGame)
+
+        if game:
+            game.gold += pts_total
+
         db.session.commit()
         return new_step
     except:
         db.session.rollback()
         return None
 
-def update_challenge_progress(id_step, points, number): # Adicione 'number' aqui
+def update_challenge_progress(id_step, points, number):
     try:
         step = db.session.get(GamesSteps, id_step)
-        if not step: return None
+        if not step:
+            return None
 
         new_challenge_record = GamesChallenges(
             idGamesSteps=id_step,
-            dateTime=datetime.now(timezone.utc),
+            dateTime=datetime.now(),
             points=points,
-            number=number  # <--- O SQLAlchemy agora recebe o valor
+            number=number
         )
-        
+
         db.session.add(new_challenge_record)
+
+        # Marca o desafio/boss como concluído
+        step.completedChallenges = True
+
+        # Atualiza pontuação da partida e gold geral do jogo
+        match = db.session.get(GamesMatches, step.idGameMatch)
+
+        if match:
+            match.scorePoints += points
+
+            game = db.session.get(Games, match.idGame)
+
+            if game:
+                game.gold += points
+
         db.session.commit()
         return new_challenge_record
 

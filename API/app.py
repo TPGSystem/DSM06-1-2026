@@ -68,7 +68,7 @@ else:
 app.config['DATABASE_NAME'] = DB_NAME
 
 # Configuração do banco de dados MySQL
-app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://root@localhost/{DB_NAME}' 
+app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://root@localhost/{DB_NAME}' 
 ## app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://root:masterkey@localhost/{DB_NAME}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  
 

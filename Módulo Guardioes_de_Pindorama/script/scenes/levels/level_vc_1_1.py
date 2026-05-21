@@ -11,6 +11,7 @@ from script.actors.npcs.cacique import NPC_Cacique
 from script.data.dialogs.dialog_1_1 import Dialogo_1_1
 
 # Importa as questões do quiz
+from script.services.api_questions import buscar_questoes_iniciais
 from script.data.quizzes.questions_1_1 import Questoes_1_1
 
 # Importa as classes de camadas visuais
@@ -201,8 +202,19 @@ class Level_VC_1_1(Level):
         self.gold_reward = 0
         self.points_to_gold_conversion = 2
 
-        # Copia e embaralha as perguntas
-        self.questions = Questoes_1_1.perguntas[:]
+        # ---------------------------------------------------------
+        # QUESTÕES VIA API
+        # ---------------------------------------------------------
+
+        perguntas_api = buscar_questoes_iniciais()
+
+        if perguntas_api:
+            print("[API] Questões carregadas com sucesso!")
+            self.questions = perguntas_api
+        else:
+            print("[API] Falha ao carregar questões. Usando mock local.")
+            self.questions = Questoes_1_1.perguntas[:]
+
         random.shuffle(self.questions)
 
     def handle_events(self, event):

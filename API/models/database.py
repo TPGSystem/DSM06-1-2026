@@ -283,7 +283,7 @@ class GamesSteps(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     idGameMatch = db.Column(db.Integer, db.ForeignKey('GamesMatches.id'), nullable=False)
     idRegion = db.Column(db.Integer, db.ForeignKey('Regions.id'), nullable=False)
-    dateTime = db.Column(db.DateTime, default=lambda: datetime.now(datetime.timezone.utc), onupdate=lambda: datetime.now(datetime.timezone.utc), index=True)
+    dateTime = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now, index=True)
     completedQuestions = db.Column(db.Boolean, default=False)
     completedChallenges = db.Column(db.Boolean, default=False)
     
@@ -304,7 +304,7 @@ class GamesQuestions(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     idGamesSteps = db.Column(db.Integer, db.ForeignKey('GamesSteps.id'), nullable=False)
     idQuestion = db.Column(db.Integer, db.ForeignKey('Questions.id'), nullable=False)
-    dateTime = db.Column(db.DateTime, default=lambda: datetime.now(datetime.timezone.utc), onupdate=lambda: datetime.now(datetime.timezone.utc), index=True)
+    dateTime = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now, index=True)
     points = db.Column(db.Integer, default=0)
     
     GamesSteps = db.relationship('GamesSteps', backref='GamesQuestions', lazy=True)
@@ -323,7 +323,7 @@ class GamesChallenges(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     idGamesSteps = db.Column(db.Integer, db.ForeignKey('GamesSteps.id'), nullable=False)
     number = db.Column(db.Integer)
-    dateTime = db.Column(db.DateTime, default=lambda: datetime.now(datetime.timezone.utc), onupdate=lambda: datetime.now(datetime.timezone.utc), index=True)
+    dateTime = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now, index=True)
     points = db.Column(db.Integer, default=0)
     
     GamesSteps = db.relationship('GamesSteps', backref='GamesChallenges', lazy=True)
