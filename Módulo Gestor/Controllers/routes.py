@@ -131,7 +131,7 @@ def init_app(app):
     # Delete   
     @app.route('/delStudent/<int:id>')
     def dstudent(id):
-        api_url = f'http://1227.0.0.1:5000/students/{id}'
+        api_url = f'http://127.0.0.1:5000/students/{id}'
 
         response = requests.delete(api_url)
 
