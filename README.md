@@ -1,4 +1,30 @@
+<div align="center">
+
+<img src="https://raw.githubusercontent.com/TPGSystem/DSM06-1-2026/main/M%C3%B3dulo%20Gestor/static/imgs/tpg_system-logo.png" width="260">
+
 # TPG System — Trilha Pedagógica Gamificada
+
+Sistema integrado voltado à gamificação pedagógica, experiências interativas e desenvolvimento educacional.
+
+![Python](https://img.shields.io/badge/Python-3.12-blue?logo=python&logoColor=white)
+![Pygame](https://img.shields.io/badge/Pygame-Game%202D-green)
+![Flask](https://img.shields.io/badge/Flask-API-black?logo=flask&logoColor=white)
+![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-ORM-red)
+![SQLite](https://img.shields.io/badge/SQLite-Database-blue?logo=sqlite&logoColor=white)
+![HTML5](https://img.shields.io/badge/HTML5-Web-orange?logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-Style-blue?logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-Front--end-yellow?logo=javascript&logoColor=black)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-Interface-purple?logo=bootstrap&logoColor=white)
+![Git](https://img.shields.io/badge/Git-Versionamento-orange?logo=git&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-Repositório-black?logo=github&logoColor=white)
+![Figma](https://img.shields.io/badge/Figma-Prototipação-red?logo=figma&logoColor=white)
+![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-success)
+![Projeto](https://img.shields.io/badge/Projeto-Integrador-orange)
+![FATEC](https://img.shields.io/badge/FATEC-DSM-red)
+
+</div>
+
+---
 
 ## 📘 Sobre o Projeto
 
