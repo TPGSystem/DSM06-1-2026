@@ -1,169 +1,275 @@
-# Guardiões de Pindorama – Versão 15
+# TPG System — Trilha Pedagógica Gamificada
 
-> Jogo digital em desenvolvimento, concebido como parte de uma proposta pedagógica gamificada, com integração entre narrativa interativa, exploração, desafios cognitivos e progressão por fases.
+## 📘 Sobre o Projeto
 
----
+O **TPG System (Trilha Pedagógica Gamificada)** é um sistema integrado voltado à utilização da gamificação como estratégia pedagógica para acompanhamento, desenvolvimento e engajamento dos estudantes no contexto educacional.
 
-## 📌 Sobre o Projeto
+O projeto integra diferentes módulos tecnológicos que atuam em conjunto para proporcionar experiências educacionais interativas, utilizando elementos de jogos digitais, monitoramento de desempenho e integração de dados pedagógicos.
 
-**Guardiões de Pindorama** é um jogo digital em desenvolvimento, concebido como parte de uma proposta de aplicação pedagógica gamificada. O projeto articula elementos de narrativa interativa, desafios baseados em tomada de decisão, progressão por fases, exploração de mapa, diálogos com personagens e confrontos em ambiente 2D, com foco na construção de experiências significativas de aprendizagem.
+Desenvolvido como Projeto Integrador do curso de **Desenvolvimento de Software Multiplataforma (DSM)** da FATEC Registro, o sistema busca unir:
 
-O jogo integra o escopo de desenvolvimento de um software educacional voltado à área de Arte, considerando princípios de engajamento, interação, mediação pedagógica e desenvolvimento de competências por meio de experiências lúdicas e narrativas.
-
----
-
-## 🎯 Objetivo do Projeto
-
-O projeto tem como objetivo desenvolver um jogo sério com potencial de aplicação pedagógica, articulando mecânicas de exploração, desafios cognitivos, narrativa e progressão por fases. A proposta busca associar recursos da linguagem dos jogos digitais à valorização de conteúdos formativos, culturais e reflexivos, promovendo maior envolvimento do jogador com o processo de aprendizagem.
-
----
-
-## 🕹️ Estrutura Geral do Jogo
-
-O fluxo principal do jogo está organizado em diferentes telas e cenas, contemplando:
-
-- Tela inicial
-- Tela de login
-- Menu principal
-- Seleção de personagem
-- Seleção de mapa
-- Fases jogáveis
-- Interações com NPCs
-- Diálogos narrativos
-- Perguntas e tomadas de decisão
-- Sistema de pausa
-- Tela de encerramento / transição
-
-Além da dimensão técnica, o projeto também considera sua aplicação como ferramenta de apoio a propostas educacionais gamificadas.
+* tecnologia;
+* educação;
+* acessibilidade;
+* narrativa interativa;
+* análise de desempenho;
+* experiência do usuário.
 
 ---
 
-## 🧰 Tecnologias Utilizadas
+# 🎯 Objetivos do Projeto
 
-O projeto foi desenvolvido com o uso das seguintes tecnologias e recursos:
-
-- **Python 3.10**
-- **Pygame**
-- Estrutura modular em arquivos `.py`
-- Assets visuais em `.png`, `.svg` e outros formatos gráficos
-- Organização de cenas, dados narrativos e progressão do jogo por scripts específicos
-
----
-
-## ⚙️ Requisitos para Execução do Projeto
-
-Para executar o projeto corretamente, é necessário preparar o ambiente com as dependências adequadas.
-
-### Instalações necessárias
-
-- Instalar o **Python 3.10**
-- Criar e ativar um **ambiente virtual (`venv`)**
-- Instalar a biblioteca **Pygame**
-
-Comando para instalar o Pygame no terminal:
-
-```bash
-pip install pygame
-```
+* Desenvolver uma plataforma integrada para experiências pedagógicas gamificadas;
+* Promover maior engajamento estudantil por meio da linguagem dos jogos digitais;
+* Integrar módulos de gerenciamento, API e jogo desktop;
+* Estruturar um ambiente voltado à evolução pedagógica dos estudantes;
+* Aplicar conceitos de acessibilidade, UX/UI e desenvolvimento multiplataforma;
+* Valorizar referências culturais brasileiras em experiências digitais interativas.
 
 ---
 
-## 🧪 Configuração do Ambiente Virtual
+# 🧩 Estrutura do Repositório
 
-Recomenda-se a criação de um ambiente virtual para isolar as dependências do projeto e evitar conflitos com outras instalações do Python.
-
-### Criar o ambiente virtual
-
-```bash
-python -m venv venv
-```
-
-### Ativar o ambiente virtual no Windows
-
-```bash
-venv\Scripts\activate
-```
-
-### Instalar o Pygame
-
-```bash
-pip install pygame
-```
+O repositório está organizado em módulos independentes e complementares, cada um responsável por uma área específica do sistema.
 
 ---
 
-## ▶️ Como Executar o Projeto
+# 🌐 API
 
-O programa deve ser carregado a partir do arquivo principal:
+📁 Pasta:
+`/API`
 
-```bash
-python main.py
-```
+A API do sistema é responsável pela comunicação entre os diferentes módulos da plataforma.
 
----
+Suas principais responsabilidades incluem:
 
-## 🔐 Sistema de Login
+* persistência de dados;
+* autenticação;
+* gerenciamento de progresso;
+* integração entre sistemas;
+* sincronização de informações;
+* estruturação futura de dashboards pedagógicos.
 
-Atualmente, os sistemas de **login e senha estão desativados** para fins de teste, validação e demonstração do projeto.
+A arquitetura foi planejada para manter separação entre:
 
-Para prosseguir a partir da tela inicial, basta pressionar **Enter**.
-
-Ao pressionar **Enter**, o usuário será direcionado para a próxima tela do sistema.
-
----
-
-## 📁 Estrutura de Pastas
-
-A organização do projeto pode conter diretórios como:
-
-```text
-assets/
-script/
-save/
-main.py
-README.md
-```
-
-De forma geral:
-
-- `assets/` → arquivos visuais, sprites, cenários, interfaces e recursos gráficos
-- `script/` → lógica de funcionamento do jogo, cenas, dados de diálogos, decisões e sistemas auxiliares
-- `save/` → dados de salvamento e estado do jogo
-- `main.py` → arquivo principal para execução do projeto
+* camada de aplicação;
+* lógica de negócios;
+* persistência de dados;
+* integração com o jogo.
 
 ---
 
-## 📘 Documentação
+# 📄 Artigo
 
-A documentação complementar do projeto pode incluir materiais de design, estrutura técnica e concepção pedagógica, como o **Game Design Document (GDD)**.
+📁 Pasta:
+`/Artigo`
 
-Sugestão de organização:
+Esta pasta contém os materiais acadêmicos relacionados ao desenvolvimento do projeto.
 
-```text
-docs/GDD_Guardioes_de_Pindorama.md
-```
+Os documentos abordam:
 
----
+* fundamentação teórica;
+* gamificação;
+* educação;
+* desenvolvimento do sistema;
+* metodologia aplicada;
+* arquitetura do projeto;
+* resultados e perspectivas futuras.
 
-## 🚧 Estado Atual do Projeto
-
-A versão atual contempla avanços na estrutura das cenas, na progressão por mapa, nas interações com personagens, nos sistemas de diálogo e nas tomadas de decisão, bem como em ajustes de elementos gráficos e funcionais ligados à experiência de jogo.
-
-O projeto segue em processo de refinamento técnico e expansão documental.
-
----
-
-## 👨‍💻 Autoria e Desenvolvimento
-
-Projeto desenvolvido no contexto acadêmico e técnico do curso de **Desenvolvimento de Software Multiplataforma**, com articulação entre desenvolvimento de jogos, design de interface, narrativa interativa e proposta pedagógica gamificada.
+O conteúdo acadêmico auxilia na contextualização pedagógica e científica do TPG System.
 
 ---
 
-## 📌 Observações Importantes
+# 📷 Fotos
 
-- O projeto encontra-se em desenvolvimento e pode passar por alterações estruturais, visuais e funcionais.
-- Alguns arquivos e recursos foram mantidos com foco em testes, prototipação e ajustes internos.
-- A organização dos diretórios contempla tanto arquivos de execução quanto materiais de apoio ao desenvolvimento visual, narrativo e técnico do jogo.
+📁 Pasta:
+`/Fotos`
+
+Contém registros visuais relacionados ao desenvolvimento e apresentação do projeto.
+
+Entre os materiais presentes estão:
+
+* imagens do sistema;
+* capturas do jogo;
+* apresentações;
+* participação em eventos;
+* registros institucionais;
+* demonstrações do projeto.
+
+---
+
+# 🖥️ Módulo Gestor
+
+📁 Pasta:
+`/Módulo Gestor`
+
+O Módulo Gestor corresponde à área administrativa e pedagógica do sistema.
+
+Seu objetivo é permitir:
+
+* gerenciamento de informações;
+* organização de conteúdos;
+* acompanhamento pedagógico;
+* administração de dados;
+* visualização de informações do sistema.
+
+A proposta do módulo é oferecer suporte à utilização pedagógica da plataforma.
+
+---
+
+# 🎮 Módulo Guardiões de Pindorama
+
+📁 Pasta:
+`/Módulo Guardioes_de_Pindorama`
+
+O módulo **Guardiões de Pindorama** consiste em um jogo digital 2D desenvolvido em Python utilizando a biblioteca Pygame.
+
+O jogo utiliza:
+
+* exploração;
+* narrativa interativa;
+* quizzes;
+* decisões;
+* combate;
+* bosses;
+* progressão de áreas;
+* desafios pedagógicos.
+
+A proposta narrativa valoriza elementos da cultura brasileira, do folclore nacional e referências históricas presentes na formação cultural do país.
+
+Entre os sistemas implementados estão:
+
+* sistema de diálogos;
+* sistema de fases;
+* bosses dinâmicos;
+* HUD;
+* sistema de decisões;
+* seleção de personagens;
+* compatibilidade com controle;
+* integração com API;
+* persistência de progresso.
+
+---
+
+# 🌍 Website
+
+📁 Pasta:
+`/Website-tpgsystem`
+
+O website do projeto possui função institucional e informativa.
+
+Seu objetivo é:
+
+* apresentar o projeto;
+* divulgar informações;
+* centralizar conteúdos;
+* disponibilizar materiais;
+* apoiar apresentações e divulgação institucional.
+
+O website também auxilia na comunicação visual e identidade do TPG System.
+
+---
+
+# 🛠️ Tecnologias Utilizadas
+
+## Linguagens e Frameworks
+
+* Python 3.12
+* Flask
+* SQLAlchemy
+* Pygame
+* HTML5
+* CSS3
+* JavaScript
+
+## Ferramentas
+
+* Git
+* GitHub
+* VSCode
+* Figma
+
+---
+
+# 🏫 Contexto Educacional
+
+O projeto busca integrar:
+
+* gamificação;
+* tecnologia educacional;
+* experiências interativas;
+* desenvolvimento de competências;
+* acessibilidade;
+* metodologias contemporâneas de ensino.
+
+A proposta dialoga com práticas voltadas à aprendizagem significativa e ao uso de recursos digitais aplicados ao contexto educacional.
+
+---
+
+# 🏆 Reconhecimento Acadêmico
+
+O projeto foi um dos selecionados para apresentação presencial na:
+
+## 16ª Feira de Tecnologia do Centro Paula Souza (FETEPS)
+
+O reconhecimento destaca o potencial técnico, pedagógico e interdisciplinar do sistema desenvolvido.
+
+---
+
+# 👥 Equipe
+
+| Integrante                | Função                      |
+| ------------------------- | --------------------------- |
+| Raphael Pedretti da Silva | UI/UX & Game Designer       |
+| Gilberto de Sousa Satyro  | Backend & System Designer   |
+| Pedro Xavier da Veiga     | Front-end Developer         |
+| Renato José Valente       | UI/UX & Desenvolvimento Web |
+
+---
+
+# 🚧 Estado Atual do Projeto
+
+## Funcionalidades Implementadas
+
+* Integração entre módulos
+* Sistema de API
+* Estrutura de persistência
+* Sistema de fases
+* Sistema de diálogos
+* Bosses dinâmicos
+* Sistema de HUD
+* Compatibilidade com controle
+* Estrutura modular de cenas
+* Website institucional
+
+## Funcionalidades em Desenvolvimento
+
+* Dashboard pedagógico
+* Ampliação de regiões do jogo
+* Expansão narrativa
+* Relatórios pedagógicos
+* Novos sistemas de gerenciamento
+* Recursos avançados de progressão
+
+---
+
+# 📄 Licença
+
+Este repositório reúne materiais acadêmicos, técnicos e experimentais desenvolvidos no contexto do Projeto Integrador do curso de Desenvolvimento de Software Multiplataforma (DSM) da FATEC Registro.
+
+O projeto encontra-se em desenvolvimento contínuo e possui finalidade:
+
+* acadêmica;
+* educacional;
+* científica;
+* tecnológica.
+
+Os códigos-fonte, documentos, artes, imagens e demais materiais presentes neste repositório são de responsabilidade de seus respectivos autores e integrantes da equipe do projeto.
+
+Até a definição de uma licença oficial para distribuição pública, todos os direitos relacionados ao projeto permanecem reservados aos autores.
+
+O uso, reprodução, modificação ou redistribuição dos materiais contidos neste repositório deve ser realizado apenas mediante autorização dos responsáveis pelo projeto.
+
 
 ---
 
