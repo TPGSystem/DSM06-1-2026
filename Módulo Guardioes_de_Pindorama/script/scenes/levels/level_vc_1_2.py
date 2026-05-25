@@ -8,8 +8,8 @@ from .level_base import Level
 from script.data.bosses.boss_registry import BOSS_REGISTRY
 
 # Importa os diálogos específicos desta fase
-from script.data.dialogs.dialog_1_2 import Dialogo_1_2
-from script.data.dialogs.dialog_1_3 import Dialogo_1_3
+from script.data.dialogs.level_1_2.mapinguari.dialog_m_1_2 import Dialogo_M_1_2
+from script.data.dialogs.level_1_2.mapinguari.dialog_m_1_3 import Dialogo_M_1_3
 
 # Importa a decisão narrativa específica desta fase
 from script.data.decisions.decision_1_2 import Decisão_1_2
@@ -102,30 +102,51 @@ class Level_VC_1_2(Level):
         # ---------------------------------------------------------
         self.player.rect.x = 100
         self.player.rect.y = 250
+        
+        # ---------------------------------------------------------
+        # ETAPA 4 - SORTEIO DO BOSS
+        # ---------------------------------------------------------
+        BossClass = random.choice(BOSS_REGISTRY)
+
+        self.boss_name = BossClass.get_display_name()
+        self.death_portrait = BossClass.get_death_portrait()
+        HudClass = BossClass.get_hud_class()
 
         # ---------------------------------------------------------
-        # ETAPA 4 - CHATBOX DA FASE
+        # ETAPA 5 - CHATBOX DA FASE
         # ---------------------------------------------------------
-        self.chatbox.set_dialog_images(
-            "assets/chatChar/level_1_2",
-            pygame.Rect(100, 410, 1080, 250)
+        chatbox_dir = getattr(
+            BossClass,
+            "CHATBOX_DIR",
+            "assets/chatChar/level_1_2"
         )
 
+        self.chatbox.set_dialog_images(
+            chatbox_dir,
+            pygame.Rect(100, 410, 1080, 250)
+)
+
         # ---------------------------------------------------------
-        # ETAPA 5 - CONTROLE DO FLUXO NARRATIVO
+        # ETAPA 6 - CONTROLE DO FLUXO NARRATIVO
         # ---------------------------------------------------------
+
+        # Busca as classes de diálogo específicas do boss sorteado.
+        # Se o boss não tiver essas classes, usa os diálogos do Mapinguari como padrão.
+        IntroDialogueClass = BossClass.INTRO_DIALOGUE_CLASS
+        FinalDialogueClass = BossClass.FINAL_DIALOGUE_CLASS
+
         # Diálogo inicial
         self.intro_started = False
         self.intro_finished = False
-        self.intro_dialogue = Dialogo_1_2.falas
+        self.intro_dialogue = IntroDialogueClass.falas
 
         # Diálogo final em partes
-        self.final_dialogue_before_choice = Dialogo_1_3.falas_antes_decisao
-        self.final_dialogue_after_yes = Dialogo_1_3.falas_depois_sim
-        self.final_dialogue_after_no = Dialogo_1_3.falas_depois_nao
+        self.final_dialogue_before_choice = FinalDialogueClass.falas_antes_decisao
+        self.final_dialogue_after_yes = FinalDialogueClass.falas_depois_sim
+        self.final_dialogue_after_no = FinalDialogueClass.falas_depois_nao
 
-        # Estrutura de decisão narrativa
-        self.final_choice_data = Decisão_1_2.perguntas[0]
+        # Estrutura de decisão narrativa conforme o boss sorteado
+        self.final_choice_data = Decisão_1_2.get_decisao(self.boss_name)
 
         # Flags de controle do fechamento da fase
         self.final_dialogue_started = False
@@ -137,21 +158,16 @@ class Level_VC_1_2(Level):
         self.player_choice = None
 
         # ---------------------------------------------------------
-        # ETAPA 6 - SORTEIO DO BOSS
-        # ---------------------------------------------------------
-        BossClass = random.choice(BOSS_REGISTRY)
-
-        self.boss_name = BossClass.get_display_name()
-        self.death_portrait = BossClass.get_death_portrait()
-        HudClass = BossClass.get_hud_class()
-
-        # ---------------------------------------------------------
         # ETAPA 7 - INSTÂNCIA DO BOSS
         # ---------------------------------------------------------
+        boss_size = getattr(BossClass, "DEFAULT_SIZE", (400, 400))
+        boss_position = getattr(BossClass, "DEFAULT_POSITION", (850, 100))
+
         self.boss = BossClass(
-            [850, 100],
+            boss_position,
             [self.all_sprites],
-            size=(400, 400)
+            size=boss_size,
+            debug_hitbox=True
         )
 
         # ---------------------------------------------------------
@@ -163,7 +179,8 @@ class Level_VC_1_2(Level):
         if hasattr(self.boss, "on_life_change"):
             self.boss.on_life_change = self.boss_hud.set
 
-        self.boss_name_font = pygame.font.Font("assets/font/Primitive.ttf", 28)
+        font_size = getattr(BossClass, "DISPLAY_FONT_SIZE", 28)
+        self.boss_name_font = pygame.font.Font("assets/font/Primitive.ttf", font_size)
         self.boss_name_text = self.boss_name_font.render(self.boss_name, True, (0, 0, 0))
         self.boss_name_pos = (880, 600)
 
@@ -192,7 +209,8 @@ class Level_VC_1_2(Level):
         """
         try:
             corpse_img = pygame.image.load(self.death_portrait).convert_alpha()
-            corpse_img = pygame.transform.scale(corpse_img, (400, 400))
+            corpse_size = getattr(type(self.boss), "DEFAULT_SIZE", getattr(self.boss, "size", (400, 400)))
+            corpse_img = pygame.transform.scale(corpse_img, corpse_size)
             self.boss_corpse = corpse_img
         except Exception as e:
             print("[WARN] Não foi possível carregar a imagem de morte do boss:", e)
@@ -315,12 +333,13 @@ class Level_VC_1_2(Level):
         O mapa poderá usar essa flag depois.
         """
         choice = (self.player_choice or "").strip().upper()
+        flag_id = self.final_choice_data.get("id")
 
         if choice.startswith("SIM"):
-            STATE.set_flag("seguir_vale_luz_sombra", True)
+            STATE.set_flag(flag_id, True)
         else:
-            STATE.set_flag("seguir_vale_luz_sombra", False)
-
+            STATE.set_flag(flag_id, False)
+    
     def handle_events(self, event):
         """
         Processa os eventos da fase:
@@ -438,7 +457,9 @@ class Level_VC_1_2(Level):
             self.boss_corpse = corpse_img
             self.boss_corpse_rect = self.boss_corpse.get_rect()
             self.boss_corpse_rect.midbottom = old_midbottom
-            self.boss_corpse_rect.y += 40
+            
+            corpse_offset_y = getattr(type(self.boss), "CORPSE_OFFSET_Y", 0)
+            self.boss_corpse_rect.y += corpse_offset_y
 
             self._boss_corpse_timer = 0
             self.boss_corpse_alpha = 255
@@ -541,19 +562,24 @@ class Level_VC_1_2(Level):
 
         self.layers.draw_back(screen)
 
+        # Boss vivo
         if not self.boss_defeated and self.boss and self.boss.alive() and not self.boss_dying:
             screen.blit(self.boss.image, self.boss.rect)
-        else:
-            if self.boss_dying and self.boss_corpse and self.boss_corpse_rect:
-                try:
-                    self.boss_corpse.set_alpha(self.boss_corpse_alpha)
-                except Exception:
-                    pass
-                screen.blit(self.boss_corpse, self.boss_corpse_rect)
 
+        # Player
         screen.blit(self.player.image, self.player.rect)
 
+        # Camada frontal do cenário
         self.layers.draw_front(screen)
+
+        # Boss morto por cima da camada frontal
+        if self.boss_dying and self.boss_corpse and self.boss_corpse_rect:
+            try:
+                self.boss_corpse.set_alpha(self.boss_corpse_alpha)
+            except Exception:
+                pass
+            screen.blit(self.boss_corpse, self.boss_corpse_rect)
+
         self.player.shots.draw(screen)
 
         screen.blit(self.hudbk.image, self.hudbk.rect)
@@ -562,12 +588,10 @@ class Level_VC_1_2(Level):
         self.boss_hud.draw(screen)
         screen.blit(self.boss_name_text, self.boss_name_pos)
 
+        self.draw_exit_arrow(screen)
+
         if self.chatbox:
             self.chatbox.draw(screen)
 
         if self.overlay:
             self.overlay.draw(screen)
-        
-        
-
-      

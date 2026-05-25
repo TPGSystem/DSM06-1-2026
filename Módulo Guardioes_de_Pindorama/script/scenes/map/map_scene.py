@@ -48,7 +48,7 @@ class Map(Scene):
         # Índice selecionado (mantemos compatibilidade com seu código antigo)
         self.cursor_choose = 0
         self.current_index = self.cursor_choose
-        self.force_vale_luz_sombra = False
+        self.force_decision_target = False
 
         # Overlay do Vilarejo Canaã COMPLETO (layer 3 quando concluído)
         # ⚠️ carregamos como Surface isolada para NÃO depender do all_sprites (que é limpo pelo load_area)
@@ -76,6 +76,8 @@ class Map(Scene):
             small_font=FONT_SMALL,
             on_resume=self.resume_game,
             on_shop=self.goto_shop,
+            on_controls=self.goto_controls,
+            on_settings=self.goto_settings,
             on_main_menu=self.goto_menu
         )
 
@@ -188,32 +190,52 @@ class Map(Scene):
         # se o jogador escolheu seguir a pista para o Vale da Luz e Sombra,
         # o cursor fica travado nessa área
         # -----------------------------------------------------
-        seguir_vale = False
+        seguir_vale_luz_sombra = False
+        seguir_vale_alecrins = False
 
         if hasattr(STATE, "get_flag"):
-            seguir_vale = STATE.get_flag("seguir_vale_luz_sombra", False)
+            seguir_vale_luz_sombra = STATE.get_flag("seguir_vale_luz_sombra", False)
+            seguir_vale_alecrins = STATE.get_flag("seguir_vale_dos_alecrins", False)
+
         elif hasattr(STATE, "flags"):
-            seguir_vale = STATE.flags.get("seguir_vale_luz_sombra", False)
+            seguir_vale_luz_sombra = STATE.flags.get("seguir_vale_luz_sombra", False)
+            seguir_vale_alecrins = STATE.flags.get("seguir_vale_dos_alecrins", False)
 
         VALE_LUZ_SOMBRA_IDX = 4
+        VALE_ALECRINS_IDX = 10
         VILA_ENSEADA_IDX = 1
-
-        if seguir_vale:
-            self.force_vale_luz_sombra = True
+        
+        # -----------------------------------------------------
+        # DECISÃO MAPINGUARI
+        # -----------------------------------------------------
+        if seguir_vale_luz_sombra:
+            self.force_decision_target = True
             self.current_index = VALE_LUZ_SOMBRA_IDX
 
-        else:
-            self.force_vale_luz_sombra = False
+        # -----------------------------------------------------
+        # DECISÃO MATITA PEREIRA
+        # -----------------------------------------------------
+        elif seguir_vale_alecrins:
+            self.force_decision_target = True
+            self.current_index = VALE_ALECRINS_IDX
 
-            # comportamento normal após concluir Vilarejo de Canaã
+        # -----------------------------------------------------
+        # SEM DECISÃO DIRECIONADA / EXPLORAÇÃO LIVRE
+        # -----------------------------------------------------
+        else:
+            self.force_decision_target = False
+
             if "Level_VC_1_2" in done and 0 <= VILA_ENSEADA_IDX < len(self.areas):
                 self.current_index = VILA_ENSEADA_IDX
             else:
                 if self.completed_areas_status[self.current_index]:
-                    self.current_index = self._next_unlocked_index(self.current_index, step=+1)
-
+                    self.current_index = self._next_unlocked_index(
+                        self.current_index,
+                        step=+1
+                    )
+                    
         self.cursor_choose = self.current_index
-        self.update_cursor_position()
+        self.update_cursor_position()            
 
     def _next_unlocked_index(self, start, step=+1):
         """
@@ -292,10 +314,16 @@ class Map(Scene):
         if event.type == pygame.KEYDOWN:
 
             # -------------------------------------------------
-            # SE O CURSOR ESTIVER FORÇADO NO VALE DA LUZ E SOMBRA,
+            # SE O CURSOR ESTIVER FORÇADO NA ESCOLHA DA PISTA,
             # BLOQUEIA A NAVEGAÇÃO ENTRE ÁREAS
             # -------------------------------------------------
-            if self.force_vale_luz_sombra:
+            if self.force_decision_target:
+
+                # Permite abrir o pause/menu mesmo com o cursor travado
+                if event.key == pygame.K_ESCAPE:
+                    self.overlay = self.pause_menu
+                    return
+
                 if event.key in (pygame.K_RETURN, pygame.K_KP_ENTER, pygame.K_e, pygame.K_SPACE):
                     if not self._is_locked(self.current_index):
                         self._enter_current_area()
@@ -384,6 +412,13 @@ class Map(Scene):
 
     def goto_shop(self):
         print("[DEBUG] A funcionalidade de escambo ainda será implementada.")
+        
+    def goto_controls(self):
+        from ..menus.control import Control
+        self.change_scene(Control())
+
+    def goto_settings(self):
+        print("[DEBUG] Tela de configurações ainda será implementada.")
 
     def goto_menu(self):
         print("[DEBUG] Retornando ao menu principal e resetando progresso...")

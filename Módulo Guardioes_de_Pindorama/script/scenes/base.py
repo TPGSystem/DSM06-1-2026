@@ -137,12 +137,23 @@ class Scene:
                 STATE.reset()
                 self.change_scene(Title())
 
+            def on_controls():
+                self.play_click()
+                from script.scenes.menus.control import Control
+                self.change_scene(Control())
+
+            def on_settings():
+                self.play_click()
+                print("[DEBUG] Tela de configurações ainda será implementada.")
+
             self.overlay = PauseInventoryOverlay(
                 parent_scene=self,
                 font=FONT_BIG,
                 small_font=FONT_SMALL,
                 on_resume=on_resume,
                 on_shop=on_shop,
+                on_controls=on_controls,
+                on_settings=on_settings,
                 on_main_menu=on_main_menu
             )
 

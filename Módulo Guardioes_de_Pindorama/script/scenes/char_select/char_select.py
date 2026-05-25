@@ -242,6 +242,14 @@ class Char_Select(Scene):
             # Verifica se a tecla Enter foi pressionada
             if event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
 
+                # -------------------------------------------------
+                # BLOQUEIO TEMPORÁRIO DE PERSONAGENS
+                # Apenas o Indígena Masculino pode iniciar o jogo
+                # -------------------------------------------------
+                if self.cursor_choose != 0:
+                    print("[Char_Select] Personagem ainda não liberado.")
+                    return
+
                 # Salva no GameState
                 STATE.selected_character = self.cursor_choose
 

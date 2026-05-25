@@ -13,7 +13,7 @@ class PauseInventoryOverlay:
     - executar callbacks recebidos da cena pai
     """
 
-    def __init__(self, parent_scene, font, small_font, on_resume, on_shop, on_main_menu):
+    def __init__(self, parent_scene, font, small_font, on_resume, on_shop, on_controls, on_settings, on_main_menu):
         """
         parent_scene: referência da cena que abriu o menu
         font: fonte principal
@@ -29,10 +29,25 @@ class PauseInventoryOverlay:
         # Callbacks que a cena pai fornece
         self.on_resume = on_resume
         self.on_shop = on_shop
+        self.on_controls = on_controls
+        self.on_settings = on_settings
         self.on_main_menu = on_main_menu
+        self.mode = "menu"
+        self.settings_options = ["Volume Música", "Volume Efeitos", "Voltar"]
+        self.settings_selected = 0
+        
+        self.controller_type = "keyboard"
+
+        try:
+            from script.controller import Controller
+            self.controller_type = Controller().get_controller_type()
+        except Exception as e:
+            print("[WARN] Não foi possível detectar controle no pause:", e)
+            
+        self.option_screen = None    
 
         # Opções exibidas no menu
-        self.options = ["Retomar", "Escambo (Loja)", "Menu Inicial"]
+        self.options = ["Retomar", "Escambo (Loja)", "Controles", "Configurações", "Menu Inicial"]
 
         # Índice da opção atualmente selecionada
         self.selected = 0
@@ -65,6 +80,43 @@ class PauseInventoryOverlay:
         if event.type != pygame.KEYDOWN:
             return
 
+        # =====================================================
+        # MODO CONTROLES
+        # =====================================================
+        if self.mode == "controls":
+
+            # ENTER / SPACE / ESC volta para o menu principal do pause
+            if event.key in (
+                pygame.K_RETURN,
+                pygame.K_SPACE,
+                pygame.K_ESCAPE
+            ):
+                self.mode = "menu"
+
+            return
+
+        # =====================================================
+        # MODO CONFIGURAÇÕES
+        # =====================================================
+        if self.mode == "settings":
+            if event.key == pygame.K_ESCAPE:
+                self.option_screen = None
+                self.mode = "menu"
+                return
+
+            if self.option_screen:
+                self.option_screen.handle_events(event)
+
+                if self.option_screen.request_back_to_pause:
+                    self.option_screen = None
+                    self.mode = "menu"
+
+            return
+
+        # =====================================================
+        # MENU PRINCIPAL DO PAUSE
+        # =====================================================
+
         # Sobe nas opções
         if event.key in (pygame.K_UP, pygame.K_w):
             self.selected = (self.selected - 1) % len(self.options)
@@ -95,6 +147,14 @@ class PauseInventoryOverlay:
         elif option == "Escambo (Loja)":
             self.on_shop()
 
+        elif option == "Controles":
+            self.mode = "controls"
+
+        elif option == "Configurações":
+            from script.scenes.menus.option import Option
+            self.option_screen = Option(return_to_pause=True)
+            self.mode = "settings"
+
         elif option == "Menu Inicial":
             self.on_main_menu()
 
@@ -109,6 +169,24 @@ class PauseInventoryOverlay:
         Desenha o overlay na tela.
         """
         width, height = display.get_size()
+
+        # =====================================================
+        # MODO CONTROLES
+        # =====================================================
+        if self.mode == "controls":
+            self._draw_controls(display)
+            return
+
+        # =====================================================
+        # MODO CONFIGURAÇÕES
+        # =====================================================
+        if self.mode == "settings":
+            self._draw_settings(display)
+            return
+
+        # =====================================================
+        # MENU PRINCIPAL DO PAUSE
+        # =====================================================
 
         # Fundo escurecido
         dim = pygame.Surface((width, height), pygame.SRCALPHA)
@@ -173,9 +251,39 @@ class PauseInventoryOverlay:
             option_surf = self.font.render(option, True, color)
             display.blit(option_surf, (right_rect.x + 8, y))
 
-            # Marca visual da opção selecionada
             if is_selected:
                 arrow = self.font.render("▶", True, color)
                 display.blit(arrow, (right_rect.x - 36, y))
 
             y += 48
+            
+    def _draw_controls(self, display):
+        width, height = display.get_size()
+
+        if self.controller_type == "playstation":
+            image_path = "assets/controls/Control_PS.png"
+        elif self.controller_type == "xbox":
+            image_path = "assets/controls/Control_XBOX.png"
+        else:
+            image_path = "assets/controls/Control_Teclado.png"
+
+        image = pygame.image.load(image_path).convert()
+        image = pygame.transform.scale(image, (width, height))
+        display.blit(image, (0, 0))
+
+        msg = self.small_font.render("ENTER, ESPAÇO ou ESC para voltar", True, (0, 0, 0))
+
+        msg_rect = msg.get_rect()
+        msg_rect.topleft = (40, height - 60)
+
+        box_rect = msg_rect.inflate(30, 18)
+
+        pygame.draw.rect(display, (255, 255, 255), box_rect, border_radius=10)
+
+        display.blit(msg, msg_rect)
+
+
+    def _draw_settings(self, display):
+        if self.option_screen:
+            self.option_screen.update()
+            self.option_screen.all_sprites.draw(display)

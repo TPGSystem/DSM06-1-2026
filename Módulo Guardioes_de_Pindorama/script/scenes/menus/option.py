@@ -10,7 +10,7 @@ from .title import Title
 class Option(Scene):
     """Classe para a tela de opções."""
     
-    def __init__(self):
+    def __init__(self, return_to_pause=False):
         super().__init__()  # Chama o construtor da classe base
             
         # Criação de objetos de fundo e outros elementos da tela
@@ -36,6 +36,8 @@ class Option(Scene):
         self.indicator = Obj("assets/menu/Cursor.png", [217, 350], [self.all_sprites], size=(110, 70))  # Imagem do cursor
         self.indicator_dir = 1  # Direção do movimento do cursor
         self.indicator_choose = 0  # Opção atualmente selecionada
+        self.return_to_pause = return_to_pause
+        self.request_back_to_pause = False
         
     def indicator_set_option(self, event):
         """Define a opção selecionada com base na tecla pressionada."""
@@ -84,7 +86,11 @@ class Option(Scene):
                 
         elif (event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER) and self.indicator_choose == 2:
             self.save_file("teste.json", self.option_data)  # Salva as opções
-            self.change_scene(Title())  # Retorna para a tela inicial
+            
+            if self.return_to_pause:
+                self.request_back_to_pause = True
+            else:
+                self.change_scene(Title()) # Retorna para a tela inicial
     
     def indicator_position(self, event):
         """Atualiza a posição do indicador com base nas teclas pressionadas."""

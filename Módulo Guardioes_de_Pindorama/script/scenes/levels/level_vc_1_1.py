@@ -26,6 +26,8 @@ from ..gameover import GameOver
 from script.services.api_client import save_questions
 from script.game_state import STATE
 
+from script.core.obj import Obj
+
 
 class Level_VC_1_1(Level):
     """
@@ -162,6 +164,18 @@ class Level_VC_1_1(Level):
             [self.all_sprites],
             (200, 200)
         )
+        
+        self.interaction_hint = Obj(
+            "assets/ui/exclamation.png",
+            [
+                self.npc.rect.centerx - 35,
+                self.npc.rect.y - 70
+            ],
+            [],
+            size=(70, 92)
+        )
+
+        self.show_interaction_hint = False
 
         # ---------------------------------------------------------
         # ETAPA 5 - CHATBOX
@@ -367,6 +381,8 @@ class Level_VC_1_1(Level):
         # ---------------------------------------------------------
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_e and self.player.rect.colliderect(self.npc.rect):
+                self.show_interaction_hint = False
+
                 self.dialogue_stage = 0
                 self.chatbox.set_frame_offset(0)
 
@@ -387,6 +403,20 @@ class Level_VC_1_1(Level):
         """
         # Atualiza a lógica comum do level
         super().update()
+        
+        distance_x = abs(self.player.rect.centerx - self.npc.rect.centerx)
+
+        self.show_interaction_hint = (
+            distance_x <= 180
+            and not self.chatbox.is_active()
+            and not self.exit_enabled
+        )
+
+        # esquerda/direita
+        self.interaction_hint.rect.centerx = self.npc.rect.centerx - 40
+
+        # cima/baixo
+        self.interaction_hint.rect.y = self.npc.rect.y - 45
 
         # Se a saída estiver liberada e o player sair pela direita,
         # troca para a fase seguinte
@@ -440,8 +470,12 @@ class Level_VC_1_1(Level):
 
         # Desenha explicitamente NPC e player
         screen.blit(self.npc.image, self.npc.rect)
+        
+        if self.show_interaction_hint:
+            screen.blit(self.interaction_hint.image, self.interaction_hint.rect)
+            
         screen.blit(self.player.image, self.player.rect)
-
+        
         # Desenha as camadas da frente
         self.layers.draw_front(screen)
 
@@ -452,6 +486,9 @@ class Level_VC_1_1(Level):
         screen.blit(self.hudbk.image, self.hudbk.rect)
         screen.blit(self.hud.image, self.hud.rect)
 
+        # Desenha a Seta de para indicar a saída da fase
+        self.draw_exit_arrow(screen)  
+        
         # Desenha o chatbox se existir
         if self.chatbox:
             self.chatbox.draw(screen)
@@ -459,5 +496,7 @@ class Level_VC_1_1(Level):
         # Desenha o overlay de pausa se estiver ativo
         if self.overlay:
             self.overlay.draw(screen)
+            
+          
 
         

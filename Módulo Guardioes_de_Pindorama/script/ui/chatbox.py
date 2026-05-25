@@ -601,7 +601,7 @@ class ChatBox:
             if speaker:
                 speaker_surf = self.speaker_font.render(speaker, True, color)
 
-                right_speakers = {"Cacique", "???", "Mapinguari"}
+                right_speakers = {"Cacique", "???", "Mapinguari", "Matita Pereira", "Anciã da Floresta"}
                 left_speakers = {"Jovem Guerreiro"}
 
                 if speaker in right_speakers:

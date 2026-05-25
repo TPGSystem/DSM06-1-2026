@@ -1,5 +1,7 @@
 import pygame
 
+from script.core.obj import Obj
+
 # Importa a cena base do projeto e o menu de pausa
 from ..base import Scene, PauseInventoryOverlay
 
@@ -135,6 +137,17 @@ class Level(Scene):
 
         # Guarda a opção selecionada
         self.selected_option = None
+        
+        self.exit_arrow = Obj(
+            "assets/ui/exit_arrow.png",
+            [1100, 100],
+            [],
+            size=(110, 70)
+        )
+
+        self.exit_arrow_base_x = 1100
+        self.exit_arrow_dir = 1
+        
 
     def _build_player(self, player_data):
         """
@@ -249,6 +262,8 @@ class Level(Scene):
                 small_font=FONT_SMALL,
                 on_resume=self.on_resume,
                 on_shop=self.on_shop,
+                on_controls=self.on_controls,
+                on_settings=self.on_settings,
                 on_main_menu=self.on_main_menu
             )
 
@@ -263,6 +278,19 @@ class Level(Scene):
         Placeholder para a futura loja / escambo.
         """
         print("[DEBUG] A funcionalidade de escambo ainda será implementada.")
+        
+    def on_controls(self):
+        """
+        Abre a tela de controles.
+        """
+        from ..menus.control import Control
+        self.change_scene(Control())
+
+    def on_settings(self):
+        """
+        Placeholder da tela de configurações.
+        """
+        print("[DEBUG] Tela de configurações ainda será implementada.")    
 
     def on_main_menu(self):
         """
@@ -329,6 +357,14 @@ class Level(Scene):
 
         # Atualiza a cena base
         super().update(dt)
+        
+        if self.exit_enabled:
+            self.exit_arrow.rect.x += self.exit_arrow_dir
+
+            if self.exit_arrow.rect.x >= self.exit_arrow_base_x + 20:
+                self.exit_arrow_dir = -1
+            elif self.exit_arrow.rect.x <= self.exit_arrow_base_x:
+                self.exit_arrow_dir = 1
 
         # Se não houver mais vidas, vai para Game Over
         if self.player.lives <= 0:
@@ -370,6 +406,9 @@ class Level(Scene):
         # Desenha a HUD do jogador
         screen.blit(self.hudbk.image, self.hudbk.rect)
         screen.blit(self.hud.image, self.hud.rect)
+        
+        # Desenha a seta de saída, se a saída estiver liberada
+        self.draw_exit_arrow(screen)
 
         # Desenha a caixa de diálogo, se existir
         if self.chatbox:
@@ -379,6 +418,14 @@ class Level(Scene):
         if self.overlay:
             self.overlay.draw(screen)
 
+    def draw_exit_arrow(self, screen):
+        """
+        Desenha a seta de saída quando a saída da fase estiver liberada.
+        """
+        if self.exit_enabled:
+            screen.blit(self.exit_arrow.image, self.exit_arrow.rect)
+    
+    
     def handle_level_exit(self, next_scene_cls=None):
         """
         Trata a saída do level.

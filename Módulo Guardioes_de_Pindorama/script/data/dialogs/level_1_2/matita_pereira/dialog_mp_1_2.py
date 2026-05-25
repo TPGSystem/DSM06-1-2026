@@ -1,0 +1,28 @@
+class Dialogo_MP_1_2:
+    """Biblioteca contendo os diálogos da interação entre o jogador e a Matita Pereira."""
+    falas = [
+        ("???",
+            "SHRIIIIIIK-KRAAAAH!!!!"),
+        ("Jovem Guerreiro",
+            "Que sons foram esses?! Toda a mata estremeceu... \nHá algo sombrio se movendo entre as árvores!"),
+        ("Jovem Guerreiro",
+            "A floresta está tão densa que eu não consigo enxergar nada..."),
+        ("Anciã da Floresta",
+            "O que faz um Jovem Guerreiro, perdido na Mata? \nEsta Região não pertence à você!"),
+        ("Jovem Guerreiro",
+            "Estou a procura do Ídolo de Pindorama!"),
+        ("Anciã da Floresta",
+            "Então você veio para roubá-lo???"),
+        ("Jovem Guerreiro",
+            "Você se engana! Eu não vim roubar as riquezas da floresta.\nEstou aqui para descobrir o destino do 'Ídolo de Pindorama'!"),
+        ("Matita Pereira",
+            "MENTIRA!!! Você age como aqueles que mentem,\nmas teu coração ainda me é oculto..."),
+        ("Matita Pereira",
+            "Enfrenta-me, guerreiro! Somente os PUROS DE CORAÇÃO\npodem vencer aquela que guarda os segredos da mata!!!"),
+        ("Matita Pereira",
+            "Se tua alma estiver livre da ambição e da corrupção, então tua\nforça romperá minha fúria... e eu saberei que está dizendo a verdade!!!"),
+        ("Jovem Guerreiro",
+            "Se essa é a prova imposta pelos espíritos\nda floresta, então eu a aceitarei!"),
+        ("Jovem Guerreiro",
+            "Mas escute bem, bruxa: se eu a vencer, você me contará \ntudo o que sabe sobre o paradeiro do 'Ídolo de Pindorama'!!!"),
+    ]

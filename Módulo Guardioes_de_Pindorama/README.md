@@ -1,100 +1,227 @@
-# Guardiões de Pindorama – Versão 15
+# Guardiões de Pindorama — V20
 
-> Jogo digital em desenvolvimento, concebido como parte de uma proposta pedagógica gamificada, com integração entre narrativa interativa, exploração, desafios cognitivos e progressão por fases.
+> Jogo sério educacional desenvolvido em Python + Pygame, integrado ao ecossistema TPG System por meio de API REST, com foco em trilhas pedagógicas gamificadas, narrativa interativa e monitoramento pedagógico.
 
 ---
 
 ## 📌 Sobre o Projeto
 
-**Guardiões de Pindorama** é um jogo digital em desenvolvimento, concebido como parte de uma proposta de aplicação pedagógica gamificada. O projeto articula elementos de narrativa interativa, desafios baseados em tomada de decisão, progressão por fases, exploração de mapa, diálogos com personagens e confrontos em ambiente 2D, com foco na construção de experiências significativas de aprendizagem.
+Guardiões de Pindorama é um jogo digital 2D desenvolvido como módulo do estudante dentro do ecossistema TPG System (Trilha Pedagógica Gamificada).
 
-O jogo integra o escopo de desenvolvimento de um software educacional voltado à área de Arte, considerando princípios de engajamento, interação, mediação pedagógica e desenvolvimento de competências por meio de experiências lúdicas e narrativas.
+O projeto integra:
 
----
+- exploração de mapa;
+- narrativa interativa;
+- combate em tempo real;
+- quizzes pedagógicos;
+- tomadas de decisão;
+- progressão por áreas;
+- persistência de progresso;
+- integração com API;
+- monitoramento pedagógico.
 
-## 🎯 Objetivo do Projeto
-
-O projeto tem como objetivo desenvolver um jogo sério com potencial de aplicação pedagógica, articulando mecânicas de exploração, desafios cognitivos, narrativa e progressão por fases. A proposta busca associar recursos da linguagem dos jogos digitais à valorização de conteúdos formativos, culturais e reflexivos, promovendo maior envolvimento do jogador com o processo de aprendizagem.
-
----
-
-## 🕹️ Estrutura Geral do Jogo
-
-O fluxo principal do jogo está organizado em diferentes telas e cenas, contemplando:
-
-- Tela inicial
-- Tela de login
-- Menu principal
-- Seleção de personagem
-- Seleção de mapa
-- Fases jogáveis
-- Interações com NPCs
-- Diálogos narrativos
-- Perguntas e tomadas de decisão
-- Sistema de pausa
-- Tela de encerramento / transição
-
-Além da dimensão técnica, o projeto também considera sua aplicação como ferramenta de apoio a propostas educacionais gamificadas.
+A proposta busca unir game design, gamificação e aprendizagem significativa por meio de referências culturais brasileiras, ancestralidade, folclore nacional e linguagens artísticas.
 
 ---
 
-## 🧰 Tecnologias Utilizadas
+## 🎯 Objetivos
 
-O projeto foi desenvolvido com o uso das seguintes tecnologias e recursos:
+O projeto possui como finalidade:
 
-- **Python 3.10**
-- **Pygame**
-- Estrutura modular em arquivos `.py`
-- Assets visuais em `.png`, `.svg` e outros formatos gráficos
-- Organização de cenas, dados narrativos e progressão do jogo por scripts específicos
+- promover engajamento por meio de jogos digitais;
+- integrar conteúdos pedagógicos à experiência narrativa;
+- acompanhar o progresso do estudante;
+- registrar métricas de jogabilidade;
+- auxiliar avaliações diagnósticas e formativas;
+- estruturar trilhas pedagógicas gamificadas.
 
 ---
 
-## ⚙️ Requisitos para Execução do Projeto
+## 🧠 Estrutura do Ecossistema TPG System
 
-Para executar o projeto corretamente, é necessário preparar o ambiente com as dependências adequadas.
+O sistema é composto por três módulos principais:
 
-### Instalações necessárias
+### 🎮 Guardiões de Pindorama
+Módulo jogável do estudante responsável por:
 
-- Instalar o **Python 3.10**
-- Criar e ativar um **ambiente virtual (`venv`)**
-- Instalar a biblioteca **Pygame**
+- gameplay;
+- exploração;
+- combate;
+- quizzes;
+- narrativa;
+- progressão;
+- sincronização de dados.
 
-Comando para instalar o Pygame no terminal:
+### 🖥️ Módulo Gestor
+Responsável por:
 
-```bash
-pip install pygame
+- gerenciamento pedagógico;
+- banco de questões;
+- habilidades e competências;
+- estudantes e turmas;
+- relatórios pedagógicos.
+
+### 🌐 API de Integração
+Responsável por:
+
+- persistência de dados;
+- comunicação entre módulos;
+- sincronização de progresso;
+- autenticação;
+- armazenamento de partidas;
+- integração com banco de dados.
+
+---
+
+## ⚙️ Tecnologias Utilizadas
+
+### Jogo
+- Python 3.12+
+- Pygame
+- JSON
+
+### API
+- Flask
+- SQLAlchemy
+- MySQL
+- PyMySQL
+- Flask-CORS
+
+### Ferramentas
+- Git / GitHub
+- Figma
+- VSCode
+- PyCharm
+- Pygbag (testes Web)
+
+---
+
+## 🕹️ Funcionalidades Implementadas
+
+### ✅ Sistema de Personagem
+- movimentação lateral;
+- ataque;
+- dash / roll;
+- defesa;
+- disparos;
+- charge shot;
+- animações por estado.
+
+### ✅ Sistema de Mapa
+- progressão por áreas;
+- desbloqueio de regiões;
+- controle de conclusão;
+- seleção via teclado e joystick.
+
+### ✅ Sistema de Diálogo
+- ChatBox customizada;
+- identificação de personagens;
+- diálogos narrativos;
+- eventos condicionais.
+
+### ✅ Sistema de Decisão
+- escolhas narrativas;
+- bifurcação de fluxo;
+- controle de estados.
+
+### ✅ Sistema de Quiz
+- perguntas contextualizadas;
+- integração pedagógica;
+- validação de respostas.
+
+### ✅ Sistema de Boss
+- inteligência artificial;
+- movimentação dinâmica;
+- ataques especiais;
+- sistema de dano;
+- controle de vida.
+
+### ✅ Sistema de Salvamento
+- persistência em JSON;
+- gerenciamento de progresso;
+- controle de áreas concluídas.
+
+### ✅ Integração API
+- comunicação Flask ↔ Pygame;
+- persistência relacional;
+- sincronização de progresso;
+- endpoints REST.
+
+---
+
+## 📁 Estrutura Geral do Projeto
+
+```text
+TPGSystem/
+│
+├── API/
+│   ├── app.py
+│   ├── models/
+│   ├── routes/
+│   ├── database/
+│   └── templates/
+│
+├── Guardioes_de_Pindorama/
+│   ├── assets/
+│   ├── docs/
+│   ├── save/
+│   ├── script/
+│   ├── main.py
+│   └── requirements.txt
+│
+└── README.md
 ```
 
 ---
 
-## 🧪 Configuração do Ambiente Virtual
+## 🔧 Requisitos
 
-Recomenda-se a criação de um ambiente virtual para isolar as dependências do projeto e evitar conflitos com outras instalações do Python.
+### Linguagens e Dependências
+- Python 3.12+
+- PIP atualizado
 
-### Criar o ambiente virtual
+---
 
+## 🧪 Criar Ambiente Virtual
+
+### Windows
 ```bash
 python -m venv venv
 ```
 
-### Ativar o ambiente virtual no Windows
-
+### Ativar ambiente virtual
 ```bash
 venv\Scripts\activate
 ```
 
-### Instalar o Pygame
+---
+
+## 📦 Instalar Dependências do Jogo
 
 ```bash
 pip install pygame
 ```
 
+ou
+
+```bash
+pip install -r requirements.txt
+```
+
 ---
 
-## ▶️ Como Executar o Projeto
+## 📦 Instalar Dependências da API
 
-O programa deve ser carregado a partir do arquivo principal:
+```bash
+pip install flask
+pip install flask_sqlalchemy
+pip install flask_cors
+pip install pymysql
+```
+
+---
+
+## ▶️ Executar o Jogo
 
 ```bash
 python main.py
@@ -102,71 +229,113 @@ python main.py
 
 ---
 
-## 🔐 Sistema de Login
+## ▶️ Executar a API
 
-Atualmente, os sistemas de **login e senha estão desativados** para fins de teste, validação e demonstração do projeto.
-
-Para prosseguir a partir da tela inicial, basta pressionar **Enter**.
-
-Ao pressionar **Enter**, o usuário será direcionado para a próxima tela do sistema.
-
----
-
-## 📁 Estrutura de Pastas
-
-A organização do projeto pode conter diretórios como:
-
-```text
-assets/
-script/
-save/
-main.py
-README.md
+```bash
+python app.py
 ```
 
-De forma geral:
-
-- `assets/` → arquivos visuais, sprites, cenários, interfaces e recursos gráficos
-- `script/` → lógica de funcionamento do jogo, cenas, dados de diálogos, decisões e sistemas auxiliares
-- `save/` → dados de salvamento e estado do jogo
-- `main.py` → arquivo principal para execução do projeto
-
----
-
-## 📘 Documentação
-
-A documentação complementar do projeto pode incluir materiais de design, estrutura técnica e concepção pedagógica, como o **Game Design Document (GDD)**.
-
-Sugestão de organização:
+A API será iniciada em:
 
 ```text
-docs/GDD_Guardioes_de_Pindorama.md
+http://localhost:5000
 ```
 
 ---
 
-## 🚧 Estado Atual do Projeto
+## 🎮 Controles
 
-A versão atual contempla avanços na estrutura das cenas, na progressão por mapa, nas interações com personagens, nos sistemas de diálogo e nas tomadas de decisão, bem como em ajustes de elementos gráficos e funcionais ligados à experiência de jogo.
-
-O projeto segue em processo de refinamento técnico e expansão documental.
+| Ação | Tecla |
+|---|---|
+| Movimentação | A / D ou ← → |
+| Pular | Espaço |
+| Ataque | Q |
+| Interação | E |
+| Defesa | K |
+| Dash / Roll | Shift |
+| Pausa | ESC |
 
 ---
 
-## 👨‍💻 Autoria e Desenvolvimento
+## 🌐 Integração com API
 
-Projeto desenvolvido no contexto acadêmico e técnico do curso de **Desenvolvimento de Software Multiplataforma**, com articulação entre desenvolvimento de jogos, design de interface, narrativa interativa e proposta pedagógica gamificada.
+A versão V20 amplia a arquitetura do projeto por meio da integração entre o jogo e uma API REST baseada em Flask.
+
+### Recursos Integrados
+- gerenciamento de estudantes;
+- gerenciamento de turmas;
+- banco de questões;
+- habilidades e competências;
+- desafios;
+- partidas;
+- progresso do jogador;
+- relatórios.
 
 ---
 
-## 📌 Observações Importantes
+## 💾 Persistência de Dados
 
-- O projeto encontra-se em desenvolvimento e pode passar por alterações estruturais, visuais e funcionais.
-- Alguns arquivos e recursos foram mantidos com foco em testes, prototipação e ajustes internos.
-- A organização dos diretórios contempla tanto arquivos de execução quanto materiais de apoio ao desenvolvimento visual, narrativo e técnico do jogo.
+O sistema atualmente utiliza:
+
+- salvamento local em JSON;
+- persistência relacional;
+- sincronização entre módulos.
+
+---
+
+## 🧾 Estado Atual do Projeto
+
+### ✅ Implementado
+- sistema de cenas;
+- sistema de mapa;
+- combate;
+- IA de boss;
+- quizzes;
+- decisões;
+- integração inicial com API;
+- persistência local;
+- joystick;
+- diálogos;
+- sistema de pausa.
+
+### 🔄 Em Refinamento
+- sincronização completa com banco;
+- dashboard pedagógico;
+- balanceamento de gameplay;
+- otimização Web;
+- refinamento de IA;
+- integração total entre módulos.
+
+---
+
+## 👥 Equipe do Projeto
+
+### Raphael Pedretti da Silva
+- UI/UX Designer
+- Game Designer
+- Desenvolvimento do módulo jogável
+- Integração narrativa e pedagógica
+
+### Gilberto de Sousa Satyro
+- Backend
+- API
+- Banco de Dados
+- Arquitetura de Sistema
+
+### Pedro Xavier da Veiga
+- Front-end
+- Estrutura visual
+- Interfaces
+
+### Renato José Valente
+- Estruturação documental
+- Organização de módulos
+- Apoio visual
 
 ---
 
 ## 📄 Licença
 
-Este projeto está em desenvolvimento. A definição de licença de uso, distribuição e modificação poderá ser estabelecida posteriormente conforme a finalidade de publicação do repositório.
+Projeto acadêmico e experimental.
+
+Licenciamento em definição.

@@ -46,6 +46,27 @@ class Controller:
         }
 
         self._init_first_joystick()
+        
+    def get_controller_type(self):
+        if not self.joystick:
+            return "keyboard"
+
+        name = self.joystick.get_name().lower()
+
+        if (
+            "wireless controller" in name
+            or "dualshock" in name
+            or "dualsense" in name
+            or "ps4" in name
+            or "sony" in name
+            or "playstation" in name
+        ):
+            return "playstation"
+
+        if "xbox" in name or "xinput" in name:
+            return "xbox"
+
+        return "xbox"    
 
     # ===== Inicialização e hotplug =====
     def _init_first_joystick(self):
