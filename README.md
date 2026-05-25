@@ -271,8 +271,4 @@ Até a definição de uma licença oficial para distribuição pública, todos o
 O uso, reprodução, modificação ou redistribuição dos materiais contidos neste repositório deve ser realizado apenas mediante autorização dos responsáveis pelo projeto.
 
 
----
 
-## 📄 Licença
-
-Este projeto está em desenvolvimento. A definição de licença de uso, distribuição e modificação poderá ser estabelecida posteriormente conforme a finalidade de publicação do repositório.
