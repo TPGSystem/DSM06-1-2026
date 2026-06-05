@@ -36,15 +36,23 @@ class PauseInventoryOverlay:
         self.settings_options = ["Volume Música", "Volume Efeitos", "Voltar"]
         self.settings_selected = 0
         
-        self.controller_type = "keyboard"
+        # =====================================================
+        # Utiliza a instância global compartilhada do controle.
+        #
+        # Não criamos Controller() aqui.
+        # Usamos exatamente o mesmo objeto criado no main.py.
+        # =====================================================
 
-        try:
-            from script.controller import Controller
-            self.controller_type = Controller().get_controller_type()
-        except Exception as e:
-            print("[WARN] Não foi possível detectar controle no pause:", e)
+        from script.controller import get_controller
+
+        self.controller = get_controller()
             
-        self.option_screen = None    
+        self.option_screen = None
+        
+        # Cache da imagem carregada
+        self.controls_image = None
+        self.controls_image_type = None
+        self.controls_image_size = None    
 
         # Opções exibidas no menu
         self.options = ["Retomar", "Escambo (Loja)", "Controles", "Configurações", "Menu Inicial"]
@@ -256,29 +264,76 @@ class PauseInventoryOverlay:
                 display.blit(arrow, (right_rect.x - 36, y))
 
             y += 48
+    
+    def _get_controls_image_path(self):
+        """
+        Retorna qual imagem deve ser exibida
+        de acordo com o controle atualmente conectado.
+        """
+
+        controller_type = self.controller.get_controller_type()
+
+        if controller_type == "playstation":
+            return "assets/controls/Control_PS.png"
+
+        if controller_type == "xbox":
+            return "assets/controls/Control_XBOX.png"
+
+        return "assets/controls/Control_Teclado.png"
+    
+    def _load_controls_image_if_needed(self, width, height):
+        """
+        Recarrega a imagem somente quando:
+        - o tipo do controle muda
+        - o tamanho da tela muda
+        """
+
+        controller_type = self.controller.get_controller_type()
+
+        if (
+            self.controls_image is not None
+            and self.controls_image_type == controller_type
+            and self.controls_image_size == (width, height)
+        ):
+            return
+
+        image_path = self._get_controls_image_path()
+
+        image = pygame.image.load(image_path).convert()
+        image = pygame.transform.scale(image, (width, height))
+
+        self.controls_image = image
+        self.controls_image_type = controller_type
+        self.controls_image_size = (width, height)
+
+        print(f"[CONTROLES] Atualizado para: {controller_type}")
             
     def _draw_controls(self, display):
         width, height = display.get_size()
 
-        if self.controller_type == "playstation":
-            image_path = "assets/controls/Control_PS.png"
-        elif self.controller_type == "xbox":
-            image_path = "assets/controls/Control_XBOX.png"
-        else:
-            image_path = "assets/controls/Control_Teclado.png"
+        # Atualiza automaticamente caso
+        # o controle seja conectado/desconectado
+        self._load_controls_image_if_needed(width, height)
 
-        image = pygame.image.load(image_path).convert()
-        image = pygame.transform.scale(image, (width, height))
-        display.blit(image, (0, 0))
+        display.blit(self.controls_image, (0, 0))
 
-        msg = self.small_font.render("ENTER, ESPAÇO ou ESC para voltar", True, (0, 0, 0))
+        msg = self.small_font.render(
+            "ENTER, ESPAÇO ou ESC para voltar",
+            True,
+            (0, 0, 0)
+        )
 
         msg_rect = msg.get_rect()
         msg_rect.topleft = (40, height - 60)
 
         box_rect = msg_rect.inflate(30, 18)
 
-        pygame.draw.rect(display, (255, 255, 255), box_rect, border_radius=10)
+        pygame.draw.rect(
+            display,
+            (255, 255, 255),
+            box_rect,
+            border_radius=10
+        )
 
         display.blit(msg, msg_rect)
 

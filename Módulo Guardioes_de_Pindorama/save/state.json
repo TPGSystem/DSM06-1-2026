@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "student_id": 1,
+  "student_name": "Gilberto Satyro",
+  "student_ra": "000001",
+  "class_id": 3,
+  "class_name": "9º ano B",
+  "teacher_name": "Raphael Pedretti",
+  "school_year": 2026,
+  "id_game": 1,
+  "id_match": 1,
+  "id_step": null,
+  "gold": 150,
+  "score_strength": 5,
+  "score_agility": 15,
+  "score_resistance": 10,
+  "score_wisdom": 10,
+  "selected_character": 0,
+  "completed_areas": [],
+  "inventory": {},
+  "flags": {}
+}

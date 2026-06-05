@@ -4,7 +4,7 @@ import traceback
 import pygame
 
 # Importa o tradutor de entrada do joystick/controle
-from script.controller import Controller
+from script.controller import get_controller
 
 # Importa a primeira cena do jogo (tela de login)
 from script.scenes.auth.login import Login
@@ -95,8 +95,26 @@ class Game:
         # Define a primeira cena do jogo
         self.scene = Login()
 
-        # Inicializa o tradutor de controle
-        self.controller = Controller()
+        # Utiliza a instância única do controle.
+        #
+        # Isso garante que:
+        # - Main.py
+        # - Tela de Controles
+        # - Menu de Pausa
+        # - Futuras telas
+        #
+        # utilizem exatamente o mesmo objeto Controller.
+        #
+        # Assim, quando um controle for conectado ou
+        # desconectado durante a execução:
+        #
+        # pygame.JOYDEVICEADDED
+        # pygame.JOYDEVICEREMOVED
+        #
+        # todos os sistemas enxergam a alteração
+        # imediatamente.
+        # =====================================================
+        self.controller = get_controller()
 
         # Se a cena possuir o método on_enter, chama ao iniciar
         self._call_scene_hook(self.scene, "on_enter")

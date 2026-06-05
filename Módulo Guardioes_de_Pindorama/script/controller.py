@@ -33,6 +33,13 @@ class Controller:
         self.button_map = {}
         self.dpad_map = {}
         self.uses_hat = False
+        
+        # -------------------------------------------------
+        # Controle de mudanças de hardware (hotplug)
+        # Sempre que um controle conectar/desconectar
+        # incrementamos esta versão.
+        # -------------------------------------------------
+        self.status_version = 0
 
         # Estados para D-Pad e analógico (evitar flood)
         self.dpad_state = {"up": False, "down": False, "left": False, "right": False}
@@ -68,6 +75,22 @@ class Controller:
 
         return "xbox"    
 
+    @property
+    def is_connected(self):
+        """
+        Retorna True quando existe um joystick ativo.
+        """
+        return self.joystick is not None
+    
+    def get_status_version(self):
+        """
+        Retorna a versão atual do estado do controle.
+
+        Sempre que conectar ou desconectar um controle,
+        esta versão será incrementada.
+        """
+        return self.status_version
+
     # ===== Inicialização e hotplug =====
     def _init_first_joystick(self):
         count = pygame.joystick.get_count()
@@ -82,6 +105,9 @@ class Controller:
             self.joystick.init()
             name = self.joystick.get_name()
             print(f"[JOYSTICK] Detectado: {name}")
+            
+            # Houve mudança de hardware
+            self.status_version += 1
 
             # Heurística simples de identificação
             name_l = (name or "").lower()
@@ -105,6 +131,10 @@ class Controller:
                 print(f"[JOYSTICK] Desconectado: {name}")
             except Exception:
                 pass
+
+            # Houve mudança real de hardware
+            self.status_version += 1
+
         self.joystick = None
 
     def _print_caps(self):
@@ -299,3 +329,26 @@ class Controller:
             st["t_first"] = 0.0
             st["t_next"] = 0.0
             self._post_key(key, False)
+            
+# =====================================================
+# INSTÂNCIA GLOBAL DO CONTROLE
+# =====================================================
+
+_CONTROLLER_SINGLETON = None
+
+
+def get_controller(debug=False):
+    """
+    Retorna uma única instância compartilhada
+    do Controller para todo o jogo.
+
+    Isso evita que cada tela crie seu próprio
+    Controller(), garantindo que todas utilizem
+    o mesmo estado do hardware.
+    """
+    global _CONTROLLER_SINGLETON
+
+    if _CONTROLLER_SINGLETON is None:
+        _CONTROLLER_SINGLETON = Controller(debug=debug)
+
+    return _CONTROLLER_SINGLETON
