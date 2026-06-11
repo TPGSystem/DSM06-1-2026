@@ -30,7 +30,7 @@ class Boss_Matita_Pereira(Obj):
     # =========================================================
     # ETAPA 1 - METADADOS DO BOSS
     # =========================================================
-    DISPLAY_NAME = "Matita_Pereira"
+    DISPLAY_NAME = "Matita Pereira"
     DISPLAY_FONT_SIZE = 25
     HUD_CLASS = BossHudMatitaPereira
 
@@ -247,6 +247,21 @@ class Boss_Matita_Pereira(Obj):
 
         # Mantém compatibilidade com a ação "run_attack".
         self.animations["run_attack"] = self.animations["fly_up"]
+
+        # Pré-gera frames espelhados — evita flip em runtime a cada frame
+        self.animations["idle_right"] = [
+            pygame.transform.flip(img, True, False) for img in self.animations["idle"]
+        ]
+        self.animations["walk_right"] = [
+            pygame.transform.flip(img, True, False) for img in self.animations["walk"]
+        ]
+        self.animations["fly_up_right"] = [
+            pygame.transform.flip(img, True, False) for img in self.animations["fly_up"]
+        ]
+        self.animations["dive_right"] = [
+            pygame.transform.flip(img, True, False) for img in self.animations["dive"]
+        ]
+        self.animations["run_attack_right"] = self.animations["fly_up_right"]
 
     def _load_frames(self, filenames):
         """
@@ -708,15 +723,15 @@ class Boss_Matita_Pereira(Obj):
             self.current_frame = (self.current_frame + 1) % len(self.animations[name])
 
             old_midbottom = self.rect.midbottom
-            self.image = self.animations[name][self.current_frame]
-
+            
             # A sprite original do Mapinguari está virada para a esquerda.
             # Por isso, só espelhamos quando ele precisa olhar para a direita.
-            if self.facing_right:
-                self.image = pygame.transform.flip(self.image, True, False)
-                self.last_visual_facing_right = True
-            else:
-                self.last_visual_facing_right = False
+            # Usa o conjunto de frames correto — sem flip em runtime
+            anim_key = name + "_right" if self.facing_right else name
+            frames = self.animations.get(anim_key, self.animations[name])
+            self.image = frames[self.current_frame % len(frames)]
+
+            self.last_visual_facing_right = self.facing_right
 
             self.rect = self.image.get_rect()
             self.rect.midbottom = old_midbottom

@@ -269,6 +269,33 @@ class Player(Obj):
         }
 
         # ---------------------------------------------------------
+        # Estados de Ação
+        # ---------------------------------------------------------
+        self.animations["idle_left"] = [
+            pygame.transform.flip(img, True, False) for img in self.animations["idle"]
+        ]
+    
+        self.animations["walk_left"] = [
+            pygame.transform.flip(img, True, False) for img in self.animations["walk"]
+        ]
+
+        self.animations["block_left"] = [
+            pygame.transform.flip(img, True, False) for img in self.animations["block"]
+        ]
+
+        self.animations["c_block_left"] = [
+            pygame.transform.flip(img, True, False) for img in self.animations["c_block"]
+        ]
+
+        self.animations["roll_left"] = [
+            pygame.transform.flip(img, True, False) for img in self.animations["roll"]
+        ]
+
+        self.animations["dead_left"] = [
+            pygame.transform.flip(img, True, False) for img in self.animations["dead"]
+        ]
+
+        # ---------------------------------------------------------
         # Tiros em ambas as direções
         # ---------------------------------------------------------
         self.animations["shot_right"] = self.animations["shot"]
@@ -304,6 +331,10 @@ class Player(Obj):
             self._ensure_anim("c_idle", "R_D", 1, fallback_key="idle")
 
         self.animations["down"] = self.animations["c_idle"]
+        self.animations["down_left"] = [                                    
+            pygame.transform.flip(img, True, False)                         
+            for img in self.animations["down"]                              
+        ] if self.animations["down"] else []   
 
         # ---------------------------------------------------------
         # MIRA DO CHARGE SHOT
@@ -811,7 +842,12 @@ class Player(Obj):
         self.attack.handle_animation_events(name, num_frames)
 
         if name in self.DIRLESS_STATES and not self.facing_right:
-            self.image = pygame.transform.flip(self.image, True, False)
+            left_key = name + "_left"
+            left_frames = self.animations.get(left_key, [])
+            if left_frames:
+                idx = min(self.img, len(left_frames) - 1)
+                self.image = left_frames[idx]
+                self.rect = self.image.get_rect(topleft=self.rect.topleft)
 
     # =========================================================
     # ETAPA 23 - DIÁLOGO

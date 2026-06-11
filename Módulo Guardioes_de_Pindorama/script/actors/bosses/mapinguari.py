@@ -3,8 +3,6 @@ import pygame
 import random
 from script.core.obj import Obj
 from script.ui.bosses.hud_mapinguari import BossHudMapinguari
-from script.data.dialogs.level_1_2.mapinguari.dialog_m_1_2 import Dialogo_M_1_2
-from script.data.dialogs.level_1_2.mapinguari.dialog_m_1_3 import Dialogo_M_1_3
 
 
 class Boss_Mapinguari(Obj):
@@ -32,15 +30,15 @@ class Boss_Mapinguari(Obj):
     # =========================================================
     DISPLAY_NAME = "Mapinguari"
     HUD_CLASS = BossHudMapinguari
-    
-    INTRO_DIALOGUE_CLASS = Dialogo_M_1_2
-    FINAL_DIALOGUE_CLASS = Dialogo_M_1_3
-    CORPSE_OFFSET_Y = 70
-    CHATBOX_DIR = "assets/chatChar/level_1_2/Mapinguari"
-    
     DEATH_PORTRAIT = os.path.join(
-        "assets", "charsSprite", "bosses", "Mapinguari", "M_D.png"
+        "assets", "charsSprite", "bosses", "M_D.png"
     )
+
+    INTRO_DIALOGUE = [
+        ("Cacique", "Jovem guerreiro, esta terra guarda agora uma presença sombria."),
+        ("Cacique", "O Mapinguari se ergue diante de você. Mantenha-se firme."),
+        ("Jovem Guerreiro", "Se a floresta clama por equilíbrio, lutarei por ela.")
+    ]
 
     def __init__(self, position, groups, size=(400, 400), debug_hitbox=False):
         # ---------------------------------------------------------
@@ -49,7 +47,7 @@ class Boss_Mapinguari(Obj):
         # Esta imagem é usada apenas para inicializar o Obj.
         # Depois disso, a imagem exibida passa a ser controlada
         # pelo dicionário self.animations.
-        image_path = os.path.join("assets", "charsSprite", "bosses", "Mapinguari", "M_I1.png")
+        image_path = os.path.join("assets", "charsSprite", "bosses", "M_I1.png")
         super().__init__(image_path, position, groups, size)
 
         # ---------------------------------------------------------
@@ -76,7 +74,7 @@ class Boss_Mapinguari(Obj):
         # ---------------------------------------------------------
         # Espera inicial: o boss aparece na tela, fica parado em idle
         # por alguns segundos e só depois começa a agir.
-        self.start_delay_ms = 2500
+        self.start_delay_ms = 5000
         self.start_waiting = True
         self.start_wait_time = None
 
@@ -85,7 +83,7 @@ class Boss_Mapinguari(Obj):
         # uma nova ação.
         self.waiting_at_point = False
         self.wait_start_time = 0
-        self.wait_after_arrival_ms = 2500
+        self.wait_after_arrival_ms = 5000
 
         # ---------------------------------------------------------
         # ETAPA 6 - MEMÓRIA DE POSIÇÃO
@@ -182,7 +180,7 @@ class Boss_Mapinguari(Obj):
         Carrega as animações do Mapinguari.
 
         Os arquivos precisam estar em:
-            assets/charsSprite/bosses/Mapinguari
+            assets/charsSprite/bosses/
         """
         # Idle/parado.
         idle_files = [
@@ -211,6 +209,17 @@ class Boss_Mapinguari(Obj):
         self.animations["walk"] = self._load_frames(walk_files)
         self.animations["run_attack"] = self._load_frames(run_attack_files)
 
+        # Pré-gera frames espelhados — evita flip em runtime a cada frame
+        self.animations["idle_right"] = [
+            pygame.transform.flip(img, True, False) for img in self.animations["idle"]
+        ]
+        self.animations["walk_right"] = [
+            pygame.transform.flip(img, True, False) for img in self.animations["walk"]
+        ]
+        self.animations["run_attack_right"] = [
+            pygame.transform.flip(img, True, False) for img in self.animations["run_attack"]
+        ]
+
     def _load_frames(self, filenames):
         """
         Recebe uma lista de nomes de arquivos e devolve uma lista
@@ -219,7 +228,7 @@ class Boss_Mapinguari(Obj):
         frames = []
 
         for filename in filenames:
-            path = os.path.join("assets", "charsSprite", "bosses", "Mapinguari", filename)
+            path = os.path.join("assets", "charsSprite", "bosses", filename)
             img = pygame.image.load(path).convert_alpha()
             img = pygame.transform.scale(img, self.size)
             frames.append(img)
@@ -423,12 +432,11 @@ class Boss_Mapinguari(Obj):
         return cls.HUD_CLASS
 
     @classmethod
-    def get_intro_dialogue_class(cls):
-        return cls.INTRO_DIALOGUE_CLASS
-
-    @classmethod
-    def get_final_dialogue_class(cls):
-        return cls.FINAL_DIALOGUE_CLASS
+    def get_intro_dialogue(cls):
+        """
+        Retorna o diálogo de introdução deste boss.
+        """
+        return cls.INTRO_DIALOGUE
 
     @classmethod
     def get_display_name(cls):
@@ -596,15 +604,15 @@ class Boss_Mapinguari(Obj):
             self.current_frame = (self.current_frame + 1) % len(self.animations[name])
 
             old_midbottom = self.rect.midbottom
-            self.image = self.animations[name][self.current_frame]
-
+           
             # A sprite original do Mapinguari está virada para a esquerda.
             # Por isso, só espelhamos quando ele precisa olhar para a direita.
-            if self.facing_right:
-                self.image = pygame.transform.flip(self.image, True, False)
-                self.last_visual_facing_right = True
-            else:
-                self.last_visual_facing_right = False
+            # Usa o conjunto de frames correto — sem flip em runtime
+            anim_key = name + "_right" if self.facing_right else name
+            frames = self.animations.get(anim_key, self.animations[name])
+            self.image = frames[self.current_frame % len(frames)]
+
+            self.last_visual_facing_right = self.facing_right
 
             self.rect = self.image.get_rect()
             self.rect.midbottom = old_midbottom
